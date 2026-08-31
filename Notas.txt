@@ -1,0 +1,40 @@
+
+Código esqueleto:
+1. Tablero.h
+2. Usuarios.h
+3. Partida.h
+
+4. Tablero.cpp
+5. Usuarios.cpp
+6. Partida.cpp
+7. Persistencia.cpp
+8. PuntajeLogros.cpp
+9. Niveles.cpp
+
+UI:
+9. MenuUI.cpp
+10. JuegoUI.cpp
+
+Entrada:
+11. main.cpp
+
+
+Puntaje:
+
+Modo progresivo, jugando los niveles en orden del 1 al 9:
+- Nivel básico: 500 puntos por victoria.
+- Nivel intermedio: 1000 puntos por victoria.
+- Nivel experto: 1500 puntos por victoria.
+
+Modo mapa, cuando el usuario elige directamente cualquiera de los 9 niveles:
+- Nivel básico: 100 puntos por victoria.
+- Nivel intermedio: 250 puntos por victoria.
+- Nivel experto: 500 puntos por victoria.
+
+Modo personalizado:
+- 8x8 = 100 puntos.
+- 12x40 = 500 puntos.
+Los tamaños intermedios se calculan proporcionalmente según la cantidad total de celdas.
+
+La fórmula que usamos para el modo personalizado es:
+puntaje = 100 + ((cantidadCeldas - 64) * 400) / 416;
