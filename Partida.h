@@ -95,7 +95,7 @@ public:
     bool esValida() const;
 
     static ConfiguracionPartida crearNivel(int numeroNivel, ModoJuego modo);
-    static ConfiguracionPartida crearPersonalizada(int filas,int columnas,int minas);
+    static ConfiguracionPartida crearPersonalizada(int filas, int columnas);
 };
 
 
@@ -171,7 +171,7 @@ public:
 // -----------------------------------------------------------------------------
 class SistemaLogros {
 public:
-    static void evaluarLogros(Usuario& usuario, const Partida& partida);
+    static void evaluarLogros(Usuario& usuario, const Partida &partida);
     static string obtenerNombre(TipoLogro logro);
     static string obtenerDescripcion(TipoLogro logro);
 };
@@ -181,7 +181,8 @@ public:
 // PONER AQUI PROTOTIPOS - FUNCIONES GENERALES RELACIONADAS CON NIVELES Y CONFIGURACION
 // -----------------------------------------------------------------------------
 
-bool validarConfiguracionPersonalizada( int filas, int columnas, int minas, string& mensajeError);
+bool validarConfiguracionPersonalizada(int filas, int columnas, string &mensajeError);
+int calcularMinasPersonalizadas(int filas, int columnas);
 
 string obtenerTextoDificultad(Dificultad dificultad);
 string obtenerTextoModo(ModoJuego modo);

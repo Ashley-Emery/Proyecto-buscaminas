@@ -19,6 +19,10 @@ Entrada:
 11. main.cpp
 
 
+
+--------------------------------------------
+
+
 Puntaje:
 
 Modo progresivo, jugando los niveles en orden del 1 al 9:
@@ -38,3 +42,35 @@ Los tamaños intermedios se calculan proporcionalmente según la cantidad total 
 
 La fórmula que usamos para el modo personalizado es:
 puntaje = 100 + ((cantidadCeldas - 64) * 400) / 416;
+
+
+
+--------------------------------------------
+
+
+Minas:
+
+Niveles predefinidos:
+
+* Nivel básico: tablero de 8x8 con 10 minas.
+* Nivel intermedio: tablero de 8x32 con 40 minas.
+* Nivel experto: tablero de 12x40 con 99 minas.
+
+Modo personalizado:
+
+* 8x8 = 10 minas.
+* 12x40 = 99 minas.
+
+Los tamaños intermedios calculan automáticamente la cantidad de minas de forma proporcional según la cantidad total de celdas.
+
+La fórmula que usamos para el modo personalizado es:
+minas = 10 + ((cantidadCeldas - 64) * 89) / 416;
+
+Donde:
+
+* 64 corresponde al mínimo de celdas permitido: 8x8.
+* 480 corresponde al máximo de celdas permitido: 12x40.
+* 89 corresponde a la diferencia entre 99 y 10 minas.
+* 416 corresponde a la diferencia entre 480 y 64 celdas.
+
+De esta manera, mientras mayor sea el tablero personalizado, mayor será automáticamente la cantidad de minas.
