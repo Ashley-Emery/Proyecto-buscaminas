@@ -74,3 +74,19 @@ Donde:
 * 416 corresponde a la diferencia entre 480 y 64 celdas.
 
 De esta manera, mientras mayor sea el tablero personalizado, mayor será automáticamente la cantidad de minas.
+
+
+----
+
+Rangos del modo personalizado:
+
+Dividir el intervalo total de celdas en cinco categorías iguales. 
+Como el tablero minimo tiene 64 celdas y el maximo 480:
+
+(480 - 64) / 5 = 83.2
+
+Rango 1 - 64–147
+Rango 2 - 148–230
+Rango 3 - 231–313
+Rango 4 - 314–396
+Rango 5 - 397–480
