@@ -1,4 +1,5 @@
 #include "Usuarios.h"
+#include "Assets.h"
 
 #include <algorithm>
 #include <cctype>
@@ -69,7 +70,7 @@ bool validarContrasenaFuerte( const string &contrasena, string &mensajeError ) {
 
 
 // USUARIO
-Usuario::Usuario() : puntajeTotal(0), siguienteNivelProgresivo(1), avatar("avatar_default"), musicaActiva(true) {
+Usuario::Usuario() : puntajeTotal(0), siguienteNivelProgresivo(1), avatar("avatar_1.png"), musicaActiva(true) {
     for (int i = 0; i < CANTIDAD_NIVELES; i++) {
         nivelesCompletados[i] = false;
     }

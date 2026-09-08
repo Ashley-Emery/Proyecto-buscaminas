@@ -136,4 +136,34 @@ const string ANIMACION_INTRO = "assets/animations/intro.mp4";
 const string ANIMACION_JULIUS = "assets/animations/julius.mp4";
 const string ANIMACION_TO_THE_RESCUE = "assets/animations/to-the-rescue.mp4";
 
+
+// -----------------------------------------------------------------------------
+// FUNCIONES DE ASSETS
+// -----------------------------------------------------------------------------
+
+string obtenerRutaAvatar(int numeroAvatar);
+string obtenerRutaAvatar(const string &nombreAvatar);
+bool avatarValido(const string &nombreAvatar);
+
+string obtenerRutaBadge(TipoLogro logro);
+
+string obtenerRutaBoton(const string &accion);
+
+string obtenerRutaNumeroCelda(int numeroMinasVecinas);
+string obtenerRutaCelda(const Celda &celda);
+string obtenerRutaBombaExplotada();
+
+string obtenerRutaFuente(const string &nombreFuente);
+
+string obtenerRutaMenu(const string &opcion);
+
+string obtenerRutaMusica(const string &nombreMusica);
+
+string obtenerRutaTemplate(const string &nombreTemplate);
+
+string obtenerRutaVideoBoss(BossNivel boss);
+string obtenerRutaVideoBoss(BossPersonalizado boss);
+
+string obtenerRutaAnimacion(const string &nombreAnimacion);
+
 #endif

@@ -13,4 +13,6 @@ add_executable(Proyecto-buscaminas
     Usuarios.cpp
     Persistencia.cpp
     PuntajeLogros.cpp
+    Assets.cpp
+    Bosses.cpp
 )
