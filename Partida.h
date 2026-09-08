@@ -57,6 +57,26 @@ enum class TipoLogro {
     CLEAN_SWEEP = 5
 };
 
+enum class BossPersonalizado {
+    HILDA_BERG,
+    WERNER_WERMAN,
+    BARONESS_VON_BON_BON,
+    DJIMMI_THE_GREAT,
+    KING_DICE
+};
+
+enum class BossNivel {
+    CAPTAIN_BRINEYBEARD,
+    BEPPI_THE_CLOWN,
+    GRIM_MATCHSTICK,
+    RIBBY_AND_CROAKS,
+    CALA_MARIA,
+    DR_KAHL_ROBOT,
+    WALLY_WARBLES,
+    CHEF_SALTBAKER,
+    THE_DEVIL
+};
+
 
 // -----------------------------------------------------------------------------
 // CLASE 3: CONFIGURACION PARTIDA
@@ -171,6 +191,14 @@ class SistemaLogros {
 
 bool validarConfiguracionPersonalizada(int filas, int columnas, string &mensajeError);
 int calcularMinasPersonalizadas(int filas, int columnas);
+
+BossPersonalizado obtenerBossPersonalizado(int filas, int columnas);
+string obtenerNombreBossPersonalizado(BossPersonalizado boss);
+string obtenerNombreNivelPersonalizado(BossPersonalizado boss);
+
+BossNivel obtenerBossNivel(int numeroNivel);
+string obtenerNombreBossNivel(BossNivel boss);
+string obtenerNombreNivel(BossNivel boss);
 
 string obtenerTextoDificultad(Dificultad dificultad);
 string obtenerTextoModo(ModoJuego modo);
