@@ -17,13 +17,13 @@ int SistemaPuntajes::calcularPuntajePersonalizado(int filas, int columnas) {
     return puntaje;
 }
 
-int SistemaPuntajes::calcularPuntaje( const Partida& partida) {
+int SistemaPuntajes::calcularPuntaje( const Partida &partida) {
 
     if (!partida.gano()) {
         return 0;
     }
 
-    const ConfiguracionPartida& configuracion =  partida.obtenerConfiguracion();
+    const ConfiguracionPartida &configuracion =  partida.obtenerConfiguracion();
 
     if (configuracion.obtenerModo() == ModoJuego::PERSONALIZADO) {
         return calcularPuntajePersonalizado(
@@ -70,7 +70,7 @@ int SistemaPuntajes::calcularPuntaje( const Partida& partida) {
     return 0;
 }
 
-int SistemaPuntajes::procesarResultado(Usuario& usuario, Partida& partida, SistemaUsuarios& sistemaUsuarios) {
+int SistemaPuntajes::procesarResultado(Usuario &usuario, Partida &partida, SistemaUsuarios &sistemaUsuarios) {
 
     if (!partida.gano() || partida.yaRegistroResultado()) {
         return 0;
@@ -79,7 +79,7 @@ int SistemaPuntajes::procesarResultado(Usuario& usuario, Partida& partida, Siste
     int puntajeGanado = calcularPuntaje(partida);
     usuario.agregarPuntaje(puntajeGanado);
 
-    const ConfiguracionPartida& configuracion = partida.obtenerConfiguracion();
+    const ConfiguracionPartida &configuracion = partida.obtenerConfiguracion();
 
     int numeroNivel = configuracion.obtenerNumeroNivel();
 
@@ -105,7 +105,7 @@ int SistemaPuntajes::procesarResultado(Usuario& usuario, Partida& partida, Siste
 }
 
 // IMPLEMENTACION DE LOGROS
-void SistemaLogros::evaluarLogros(Usuario& usuario, const Partida& partida) {
+void SistemaLogros::evaluarLogros(Usuario &usuario, const Partida &partida) {
 
     if (!partida.gano()) {
         return;

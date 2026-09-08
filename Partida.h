@@ -63,39 +63,31 @@ enum class TipoLogro {
 // Almacena dimensiones, minas, tiempo, nivel, dificultad y modo.
 // -----------------------------------------------------------------------------
 class ConfiguracionPartida {
-private:
-    int filas;
-    int columnas;
-    int minas;
-    int tiempoLimiteSegundos;
-    int numeroNivel;
-    Dificultad dificultad;
-    ModoJuego modo;
+    private:
+        int filas;
+        int columnas;
+        int minas;
+        int tiempoLimiteSegundos;
+        int numeroNivel;
+        Dificultad dificultad;
+        ModoJuego modo;
 
-public:
-    ConfiguracionPartida();
-    ConfiguracionPartida(
-        int filas,
-        int columnas,
-        int minas,
-        int tiempoLimiteSegundos,
-        int numeroNivel,
-        Dificultad dificultad,
-        ModoJuego modo
-    );
+    public:
+        ConfiguracionPartida();
+        ConfiguracionPartida(int filas, int columnas, int minas, int tiempoLimiteSegundos, int numeroNivel, Dificultad dificultad, ModoJuego modo);
 
-    int obtenerFilas() const;
-    int obtenerColumnas() const;
-    int obtenerMinas() const;
-    int obtenerTiempoLimiteSegundos() const;
-    int obtenerNumeroNivel() const;
-    Dificultad obtenerDificultad() const;
-    ModoJuego obtenerModo() const;
+        int obtenerFilas() const;
+        int obtenerColumnas() const;
+        int obtenerMinas() const;
+        int obtenerTiempoLimiteSegundos() const;
+        int obtenerNumeroNivel() const;
+        Dificultad obtenerDificultad() const;
+        ModoJuego obtenerModo() const;
 
-    bool esValida() const;
+        bool esValida() const;
 
-    static ConfiguracionPartida crearNivel(int numeroNivel, ModoJuego modo);
-    static ConfiguracionPartida crearPersonalizada(int filas, int columnas);
+        static ConfiguracionPartida crearNivel(int numeroNivel, ModoJuego modo);
+        static ConfiguracionPartida crearPersonalizada(int filas, int columnas);
 };
 
 
@@ -105,44 +97,44 @@ public:
 // -----------------------------------------------------------------------------
 class Partida {
     
-private:
-    ConfiguracionPartida configuracion;
-    Tablero* tablero;
-    EstadoPartida estado;
-    int tiempoRestanteSegundos;
-    bool utilizoBanderas;
-    bool resultadoRegistrado;
+    private:
+        ConfiguracionPartida configuracion;
+        Tablero* tablero;
+        EstadoPartida estado;
+        int tiempoRestanteSegundos;
+        bool utilizoBanderas;
+        bool resultadoRegistrado;
 
-public:
-    Partida();
-    explicit Partida(const ConfiguracionPartida& configuracion);
-    ~Partida();
+    public:
+        Partida();
+        explicit Partida(const ConfiguracionPartida& configuracion);
+        ~Partida();
 
-    Partida(const Partida&) = delete;
-    Partida& operator=(const Partida&) = delete;
+        Partida(const Partida&) = delete;
+        Partida& operator=(const Partida&) = delete;
 
-    bool iniciar(const ConfiguracionPartida& nuevaConfiguracion);
-    bool procesarClicIzquierdo(int fila, int columna);
-    bool procesarClicDerecho(int fila, int columna);
-    void actualizarCronometro();
+        bool iniciar(const ConfiguracionPartida& nuevaConfiguracion);
+        bool procesarClicIzquierdo(int fila, int columna);
+        bool procesarClicDerecho(int fila, int columna);
+        void actualizarCronometro();
 
-    bool estaFinalizada() const;
-    bool gano() const;
-    bool perdio() const;
-    bool seAgotoElTiempo() const;
+        bool estaFinalizada() const;
+        bool gano() const;
+        bool perdio() const;
+        bool seAgotoElTiempo() const;
 
-    int obtenerTiempoRestante() const;
-    int obtenerMinasRestantes() const;
-    bool usoBanderas() const;
-    bool yaRegistroResultado() const;
-    void marcarResultadoRegistrado();
+        int obtenerTiempoRestante() const;
+        int obtenerMinasRestantes() const;
+        bool usoBanderas() const;
+        bool yaRegistroResultado() const;
+        void marcarResultadoRegistrado();
 
-    EstadoPartida obtenerEstado() const;
-    const ConfiguracionPartida& obtenerConfiguracion() const;
-    const Tablero* obtenerTablero() const;
-    Tablero* obtenerTablero();
+        EstadoPartida obtenerEstado() const;
+        const ConfiguracionPartida& obtenerConfiguracion() const;
+        const Tablero* obtenerTablero() const;
+        Tablero* obtenerTablero();
 
-    friend class ArchivoPersistencia;
+        friend class ArchivoPersistencia;
 };
 
 
@@ -152,16 +144,12 @@ public:
 // Centraliza las reglas para calcular y aplicar puntajes.
 // -----------------------------------------------------------------------------
 class SistemaPuntajes {
-public:
-    static int calcularPuntaje(const Partida& partida);
-    static int calcularPuntajePersonalizado(int filas, int columnas);
+    public:
+        static int calcularPuntaje(const Partida& partida);
+        static int calcularPuntajePersonalizado(int filas, int columnas);
 
-    // Aplica puntaje, progreso, niveles y logros una sola vez.
-    static int procesarResultado(
-        Usuario& usuario,
-        Partida& partida,
-        SistemaUsuarios& sistemaUsuarios
-    );
+        // Aplica puntaje, progreso, niveles y logros una sola vez.
+        static int procesarResultado(Usuario& usuario, Partida& partida, SistemaUsuarios& sistemaUsuarios);
 };
 
 
@@ -170,10 +158,10 @@ public:
 // Evalúa y concede las seis badges/logros.
 // -----------------------------------------------------------------------------
 class SistemaLogros {
-public:
-    static void evaluarLogros(Usuario& usuario, const Partida &partida);
-    static string obtenerNombre(TipoLogro logro);
-    static string obtenerDescripcion(TipoLogro logro);
+    public:
+        static void evaluarLogros(Usuario& usuario, const Partida &partida);
+        static string obtenerNombre(TipoLogro logro);
+        static string obtenerDescripcion(TipoLogro logro);
 };
 
 

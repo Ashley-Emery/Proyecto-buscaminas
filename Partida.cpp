@@ -3,7 +3,7 @@
 Partida::Partida() : tablero(nullptr), estado(EstadoPartida::NO_INICIADA), tiempoRestanteSegundos(0), utilizoBanderas(false), resultadoRegistrado(false) {
 }
 
-Partida::Partida(const ConfiguracionPartida& configuracion) : tablero(nullptr), estado(EstadoPartida::NO_INICIADA),
+Partida::Partida(const ConfiguracionPartida &configuracion) : tablero(nullptr), estado(EstadoPartida::NO_INICIADA),
     tiempoRestanteSegundos(0), utilizoBanderas(false), resultadoRegistrado(false) {
     
         iniciar(configuracion);
@@ -14,7 +14,7 @@ Partida::~Partida() {
     tablero = nullptr;
 }
 
-bool Partida::iniciar(const ConfiguracionPartida& nuevaConfiguracion) {
+bool Partida::iniciar(const ConfiguracionPartida &nuevaConfiguracion) {
     if (!nuevaConfiguracion.esValida()) {
         return false;
     }
@@ -124,9 +124,7 @@ int Partida::obtenerMinasRestantes() const {
         return 0;
     }
 
-    int restantes =
-        tablero->obtenerCantidadMinas() -
-        tablero->contarBanderas();
+    int restantes = tablero->obtenerCantidadMinas() - tablero->contarBanderas();
 
     return restantes < 0 ? 0 : restantes;
 }
@@ -147,7 +145,7 @@ EstadoPartida Partida::obtenerEstado() const {
     return estado;
 }
 
-const ConfiguracionPartida& Partida::obtenerConfiguracion() const {
+const ConfiguracionPartida &Partida::obtenerConfiguracion() const {
     return configuracion;
 }
 

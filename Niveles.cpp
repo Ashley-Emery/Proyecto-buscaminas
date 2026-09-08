@@ -150,7 +150,7 @@ int calcularMinasPersonalizadas(int filas, int columnas) {
     return minas;
 }
 
-bool validarConfiguracionPersonalizada(int filas, int columnas, string& mensajeError) {
+bool validarConfiguracionPersonalizada(int filas, int columnas, string &mensajeError) {
 
     if (filas < FILAS_MINIMAS || filas > FILAS_MAXIMAS) {
         mensajeError = "Las filas deben estar entre 8 y 12.";

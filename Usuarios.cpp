@@ -7,7 +7,7 @@ using namespace std;
 
 
 // FUNCIONES GENERALES DE USUARIO / CONTRASEÑA
-string normalizarNombreUsuario(const string& nombreUsuario) {
+string normalizarNombreUsuario(const string &nombreUsuario) {
 
     string resultado = nombreUsuario;
 
@@ -19,7 +19,7 @@ string normalizarNombreUsuario(const string& nombreUsuario) {
     return resultado;
 }
 
-bool validarContrasenaFuerte( const string& contrasena, string& mensajeError ) {
+bool validarContrasenaFuerte( const string &contrasena, string &mensajeError ) {
     
     if (contrasena.length() < 6) {
         mensajeError = "La contrasena debe tener una longitud minima de 6 caracteres.";
@@ -79,7 +79,7 @@ Usuario::Usuario() : puntajeTotal(0), siguienteNivelProgresivo(1), avatar("avata
     }
 }
 
-const string& Usuario::obtenerNombreUsuario() const {
+const string &Usuario::obtenerNombreUsuario() const {
     return nombreUsuario;
 }
 
@@ -91,7 +91,7 @@ int Usuario::obtenerSiguienteNivelProgresivo() const {
     return siguienteNivelProgresivo;
 }
 
-const string& Usuario::obtenerAvatar() const {
+const string &Usuario::obtenerAvatar() const {
     return avatar;
 }
 
@@ -162,7 +162,7 @@ void Usuario::otorgarLogro(TipoLogro logro) {
     }
 }
 
-void Usuario::establecerAvatar(const string& nuevoAvatar) {
+void Usuario::establecerAvatar(const string &nuevoAvatar) {
 
     if (!nuevoAvatar.empty()) {
         avatar = nuevoAvatar;
@@ -174,9 +174,9 @@ void Usuario::establecerMusicaActiva(bool activa) {
     musicaActiva = activa;
 }
 
-bool Usuario::cambiarContrasena( const string& contrasenaAnterior, const string& contrasenaNueva, string& mensajeError) {
+bool Usuario::cambiarContrasena( const string &contrasenaAnterior, const string &contrasenaNueva, string &mensajeError) {
 
-    if (contrasenaAnterior != hashContrasena) {
+    if (contrasenaAnterior != contrasena) {
         mensajeError = "La contrasena actual no coincide.";
         return false;
     }
@@ -185,19 +185,19 @@ bool Usuario::cambiarContrasena( const string& contrasenaAnterior, const string&
         return false;
     }
 
-    if (contrasenaNueva == hashContrasena) {
+    if (contrasenaNueva == contrasena) {
         mensajeError = "La nueva contrasena debe ser diferente a la actual.";
         return false;
     }
 
-    hashContrasena = contrasenaNueva;
+    contrasena = contrasenaNueva;
     mensajeError.clear();
     return true;
 }
 
 
 // SISTEMA USUARIOS
-SistemaUsuarios::SistemaUsuarios(const string& rutaArchivo) : usuarios(nullptr), totalUsuarios(0), capacidadUsuarios(10), rutaArchivoUsuarios(rutaArchivo) {
+SistemaUsuarios::SistemaUsuarios(const string &rutaArchivo) : usuarios(nullptr), totalUsuarios(0), capacidadUsuarios(10), rutaArchivoUsuarios(rutaArchivo) {
 
     usuarios = new Usuario*[capacidadUsuarios];
 
@@ -257,7 +257,7 @@ bool SistemaUsuarios::guardar() const {
     return ArchivoPersistencia::guardarUsuarios( *this, rutaArchivoUsuarios);
 }
 
-Usuario* SistemaUsuarios::buscarUsuario( const string& nombreUsuario) const {
+Usuario* SistemaUsuarios::buscarUsuario( const string &nombreUsuario) const {
 
     string buscado = normalizarNombreUsuario(nombreUsuario);
 
@@ -270,7 +270,7 @@ Usuario* SistemaUsuarios::buscarUsuario( const string& nombreUsuario) const {
     return nullptr;
 }
 
-bool SistemaUsuarios::registrarUsuario( const string& nombreUsuario, const string& contrasena, string& mensajeError) {
+bool SistemaUsuarios::registrarUsuario( const string &nombreUsuario, const string &contrasena, string &mensajeError) {
 
     if (nombreUsuario.empty()) {
         mensajeError = "El nombre de usuario no puede estar vacio.";
@@ -295,7 +295,7 @@ bool SistemaUsuarios::registrarUsuario( const string& nombreUsuario, const strin
 
     Usuario* nuevoUsuario = new Usuario();
     nuevoUsuario->nombreUsuario = nombreUsuario;
-    nuevoUsuario->hashContrasena = contrasena;
+    nuevoUsuario->contrasena = contrasena;
 
     usuarios[totalUsuarios] = nuevoUsuario;
     totalUsuarios++;
@@ -313,7 +313,7 @@ bool SistemaUsuarios::registrarUsuario( const string& nombreUsuario, const strin
     return true;
 }
 
-Usuario* SistemaUsuarios::iniciarSesion( const string& nombreUsuario, const string& contrasena) const {
+Usuario* SistemaUsuarios::iniciarSesion( const string &nombreUsuario, const string &contrasena) const {
 
     Usuario* usuario = buscarUsuario(nombreUsuario);
 
@@ -321,7 +321,7 @@ Usuario* SistemaUsuarios::iniciarSesion( const string& nombreUsuario, const stri
         return nullptr;
     }
 
-    if (usuario->hashContrasena != contrasena) {
+    if (usuario->contrasena != contrasena) {
         return nullptr;
     }
 

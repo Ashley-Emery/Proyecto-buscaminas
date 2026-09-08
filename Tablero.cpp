@@ -1,7 +1,6 @@
 #include "Tablero.h"
 
 #include <algorithm>
-#include <ctime>
 #include <random>
 
 using namespace std;
@@ -198,7 +197,7 @@ void Tablero::expansionRecursiva(int fila, int columna) {
         return;
     }
 
-    Celda& celda = celdas[fila][columna];
+    Celda &celda = celdas[fila][columna];
 
     if (celda.estaRevelada() ||
         celda.estaMarcada() ||
@@ -231,7 +230,7 @@ bool Tablero::revelarCelda(int fila, int columna) {
         return false;
     }
 
-    Celda& celda = celdas[fila][columna];
+    Celda &celda = celdas[fila][columna];
 
     if (celda.estaRevelada() || celda.estaMarcada()) {
         return false;
@@ -251,7 +250,7 @@ bool Tablero::alternarBandera(int fila, int columna) {
         return false;
     }
 
-    Celda& celda = celdas[fila][columna];
+    Celda &celda = celdas[fila][columna];
 
     if (celda.estaRevelada()) {
         return false;
@@ -268,7 +267,7 @@ bool Tablero::verificarVictoria() const {
 
     for (int fila = 0; fila < filas; fila++) {
         for (int columna = 0; columna < columnas; columna++) {
-            const Celda& celda = celdas[fila][columna];
+            const Celda &celda = celdas[fila][columna];
 
             if (!celda.tieneMina() && !celda.estaRevelada()) {
                 return false;
@@ -288,7 +287,7 @@ bool Tablero::todasLasMinasMarcadasCorrectamente() const {
 
     for (int fila = 0; fila < filas; fila++) {
         for (int columna = 0; columna < columnas; columna++) {
-            const Celda& celda = celdas[fila][columna];
+            const Celda &celda = celdas[fila][columna];
 
             if (celda.estaMarcada() && !celda.tieneMina()) {
                 return false;
