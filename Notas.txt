@@ -90,3 +90,31 @@ Rango 2 - 148–230
 Rango 3 - 231–313
 Rango 4 - 314–396
 Rango 5 - 397–480
+
+
+----
+
+JuegosUI.cpp - Nuestros modulos son basicamente estos:
+
+Qt Widgets:
+    QWidget
+    QStackedWidget
+    QLabel
+    QPushButton
+    QGraphicsView
+    QGraphicsScene
+    QGraphicsPixmapItem
+    QGraphicsSimpleTextItem
+    QGraphicsSceneMouseEvent
+    QMessageBox
+
+
+Qt Multimedia:
+    QMediaPlayer
+    └── QMediaPlaylist
+
+Qt Multimedia Widgets:
+    QVideoWidget
+
+Qt Core:
+    QTimer
