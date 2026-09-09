@@ -7,16 +7,16 @@ namespace {
         switch (numeroNivel) {
 
             case 1: return 180;
-            case 2: return 150;
-            case 3: return 120;
+            case 2: return 180;
+            case 3: return 180;
 
-            case 4: return 360;
-            case 5: return 300;
-            case 6: return 240;
+            case 4: return 420;
+            case 5: return 420;
+            case 6: return 420;
 
-            case 7: return 600;
-            case 8: return 540;
-            case 9: return 480;
+            case 7: return 720;
+            case 8: return 720;
+            case 9: return 720;
 
             default: return 0;
         }
@@ -27,10 +27,10 @@ namespace {
         const int celdasMaximas = FILAS_MAXIMAS * COLUMNAS_MAXIMAS;
         const int celdasActuales = filas * columnas;
 
-        // Escala lineal propuesta: 180 s para 8x8 hasta 600 s para 12x40.
-        int tiempo = 180 + ((celdasActuales - celdasMinimas) * (600 - 180)) / (celdasMaximas - celdasMinimas);
+        // Escala lineal propuesta: 180 s para 8x8 hasta 720 s para 12x40.
+        int tiempo = 180 + ((celdasActuales - celdasMinimas) * (720 - 180)) / (celdasMaximas - celdasMinimas);
 
-        return max(180, min(600, tiempo));
+        return max(180, min(720, tiempo));
     }
 }
 
