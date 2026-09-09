@@ -260,6 +260,23 @@ bool Tablero::alternarBandera(int fila, int columna) {
     return true;
 }
 
+void Tablero::revelarTodasLasMinas() {
+
+    if (celdas == nullptr || !minasSembradas) {
+        return;
+    }
+
+    for (int fila = 0; fila < filas; fila++) {
+
+        for (int columna = 0; columna < columnas; columna++) {
+
+            if (celdas[fila][columna].tieneMina()) {
+                celdas[fila][columna].establecerRevelada(true);
+            }
+        }
+    }
+}
+
 bool Tablero::verificarVictoria() const {
     if (!minasSembradas) {
         return false;

@@ -99,6 +99,19 @@ void Partida::actualizarCronometro() {
     }
 }
 
+void Partida::revelarMinasAlFinalizar() {
+
+    if (tablero == nullptr) {
+        return;
+    }
+
+    if (estado != EstadoPartida::PERDIDA && estado != EstadoPartida::TIEMPO_AGOTADO) {
+        return;
+    }
+
+    tablero->revelarTodasLasMinas();
+}
+
 bool Partida::estaFinalizada() const {
     return estado == EstadoPartida::GANADA || estado == EstadoPartida::PERDIDA || estado == EstadoPartida::TIEMPO_AGOTADO;
 }

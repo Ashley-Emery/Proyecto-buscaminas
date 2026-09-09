@@ -67,6 +67,8 @@ class Tablero {
 
         bool revelarCelda(int fila, int columna);
         bool alternarBandera(int fila, int columna);
+        
+        void revelarTodasLasMinas();
 
         bool verificarVictoria() const;
         bool todasLasMinasMarcadasCorrectamente() const;

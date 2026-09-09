@@ -138,6 +138,8 @@ class Partida {
         bool procesarClicDerecho(int fila, int columna);
         void actualizarCronometro();
 
+        void revelarMinasAlFinalizar();
+
         bool estaFinalizada() const;
         bool gano() const;
         bool perdio() const;
