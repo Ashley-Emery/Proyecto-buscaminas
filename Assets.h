@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "Partida.h"
+
 using namespace std;
 
 // -----------------------------------------------------------------------------
@@ -57,6 +59,9 @@ const string CELDA_2 = "assets/dashboard/2.png";
 const string CELDA_3 = "assets/dashboard/3.png";
 const string CELDA_4 = "assets/dashboard/4.png";
 const string CELDA_5 = "assets/dashboard/5.png";
+const string CELDA_6 = "assets/dashboard/6.png";
+const string CELDA_7 = "assets/dashboard/7.png";
+const string CELDA_8 = "assets/dashboard/8.png";
 const string CELDA_BOMBA = "assets/dashboard/bomb.png";
 const string CELDA_LIBRE = "assets/dashboard/clear.png";
 const string CELDA_BOMBA_EXPLOTADA = "assets/dashboard/landed_bomb.png";

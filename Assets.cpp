@@ -222,6 +222,15 @@ string obtenerRutaNumeroCelda(int numeroMinasVecinas) {
 
         case 5:
             return CELDA_5;
+
+        case 6:
+            return CELDA_6;
+
+        case 7:
+            return CELDA_7;
+
+        case 8:
+            return CELDA_8;
     }
 
     return CELDA_LIBRE;
