@@ -15,4 +15,5 @@ add_executable(Proyecto-buscaminas
     PuntajeLogros.cpp
     Assets.cpp
     Bosses.cpp
+    JuegoUI.cpp
 )
