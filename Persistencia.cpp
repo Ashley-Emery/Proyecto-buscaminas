@@ -144,8 +144,11 @@ bool ArchivoPersistencia::guardarUsuarios(const SistemaUsuarios &sistemaUsuarios
         }
 
         uint8_t musica = usuario->musicaActiva ? 1 : 0;
+        uint8_t recompensaSecreta = usuario->recompensaSecretaReclamada ? 1 : 0;
 
-        if (!escribirValor(archivo, musica)) {
+        if (!escribirValor(archivo, musica) ||
+            !escribirValor(archivo, recompensaSecreta)) {
+
             return false;
         }
 
@@ -207,13 +210,17 @@ bool ArchivoPersistencia::cargarUsuarios(SistemaUsuarios &sistemaUsuarios, const
         }
 
         uint8_t musica = 0;
+        uint8_t recompensaSecreta = 0;
 
-        if (!leerValor(archivo, musica)) {
+        if (!leerValor(archivo, musica) ||
+            !leerValor(archivo, recompensaSecreta)) {
+
             delete usuario;
             return false;
         }
 
         usuario->musicaActiva = musica != 0;
+        usuario->recompensaSecretaReclamada = recompensaSecreta != 0;
 
         for (int nivel = 0; nivel < CANTIDAD_NIVELES; nivel++) {
             uint8_t completado = 0;

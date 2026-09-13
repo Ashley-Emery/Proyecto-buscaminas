@@ -22,6 +22,7 @@ class Usuario {
         bool logros[CANTIDAD_LOGROS];
         string avatar;
         bool musicaActiva;
+        bool recompensaSecretaReclamada;
 
     public:
         Usuario();
@@ -31,6 +32,7 @@ class Usuario {
         int obtenerSiguienteNivelProgresivo() const;
         const string &obtenerAvatar() const;
         bool tieneMusicaActiva() const;
+        bool reclamoRecompensaSecreta() const;
 
         bool completoNivel(int numeroNivel) const;
         bool tieneLogro(TipoLogro logro) const;
@@ -48,6 +50,7 @@ class Usuario {
 
         friend class SistemaUsuarios;
         friend class ArchivoPersistencia;
+        friend class SistemaPuntajes;
 };
 
 // -----------------------------------------------------------------------------

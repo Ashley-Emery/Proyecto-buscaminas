@@ -104,6 +104,20 @@ int SistemaPuntajes::procesarResultado(Usuario &usuario, Partida &partida, Siste
     return puntajeGanado;
 }
 
+bool SistemaPuntajes::reclamarRecompensaSecreta(Usuario &usuario, SistemaUsuarios &sistemaUsuarios) {
+
+    if (usuario.recompensaSecretaReclamada) {
+        return false;
+    }
+
+    usuario.agregarPuntaje(500);
+    usuario.recompensaSecretaReclamada = true;
+
+    sistemaUsuarios.guardar();
+
+    return true;
+}
+
 // IMPLEMENTACION DE LOGROS
 void SistemaLogros::evaluarLogros(Usuario &usuario, const Partida &partida) {
 

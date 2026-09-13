@@ -172,6 +172,7 @@ class SistemaPuntajes {
 
         // Aplica puntaje, progreso, niveles y logros una sola vez.
         static int procesarResultado(Usuario& usuario, Partida& partida, SistemaUsuarios& sistemaUsuarios);
+        static bool reclamarRecompensaSecreta(Usuario& usuario, SistemaUsuarios& sistemaUsuarios);
 };
 
 
