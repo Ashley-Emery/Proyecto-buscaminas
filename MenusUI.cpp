@@ -22,6 +22,8 @@
 #include <QResizeEvent>
 #include <QApplication>
 
+#include <QImage>
+
 using namespace std;
 
 QWidget* crearJuegoUI(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo, int numeroNivel);
@@ -59,6 +61,9 @@ class MenusUI : public QWidget {
         QWidget* paginaPerfil;
         QWidget* paginaCambioPassword;
         QWidget* paginaHighScores;
+        QWidget* paginaPlay;
+        QWidget* paginaRewards;
+        QWidget* paginaBadgesInfo;
 
         // INTRO
         QVideoWidget* videoIntro;
@@ -165,6 +170,29 @@ class MenusUI : public QWidget {
         QLabel* imagenesBadges[CANTIDAD_LOGROS];
         QPushButton* botonHomeHighScores;
 
+        // PLAY
+        QWidget* contenedorPlay;
+        QLabel* fondoPlay;
+        QLabel* textoPlay;
+        QPushButton* botonHomePlay;
+        QPushButton* botonRewardsPlay;
+        QPushButton* botonHighScoresPlay;
+        QPushButton* botonNextQuest;
+        QPushButton* botonCustomMayhem;
+
+        // REWARDS
+        QWidget* contenedorRewards;
+        QLabel* fondoRewards;
+        QLabel* textoRewards;
+        QLabel* imagenesBadgesRewards[CANTIDAD_LOGROS];
+        QPushButton* botonBackRewards;
+        QPushButton* botonInfoRewards;
+
+        // BADGES INFO
+        QWidget* contenedorBadgesInfo;
+        QLabel* fondoBadgesInfo;
+        QPushButton* botonBackBadgesInfo;
+
     public:
 
         MenusUI(QWidget* parent = nullptr)
@@ -253,6 +281,25 @@ class MenusUI : public QWidget {
                 textoMiScore(nullptr),
                 textoTituloMedallas(nullptr),
                 botonHomeHighScores(nullptr),
+                paginaPlay(nullptr),
+                contenedorPlay(nullptr),
+                fondoPlay(nullptr),
+                textoPlay(nullptr),
+                botonHomePlay(nullptr),
+                botonRewardsPlay(nullptr),
+                botonHighScoresPlay(nullptr),
+                botonNextQuest(nullptr),
+                botonCustomMayhem(nullptr),
+                paginaRewards(nullptr),
+                contenedorRewards(nullptr),
+                fondoRewards(nullptr),
+                textoRewards(nullptr),
+                botonBackRewards(nullptr),
+                botonInfoRewards(nullptr),
+                paginaBadgesInfo(nullptr),
+                contenedorBadgesInfo(nullptr),
+                fondoBadgesInfo(nullptr),
+                botonBackBadgesInfo(nullptr),
                 botonExit(nullptr) {
 
             for (int i = 0; i < CANTIDAD_NIVELES; i++) {
@@ -265,7 +312,8 @@ class MenusUI : public QWidget {
             }
 
             for (int i = 0; i < CANTIDAD_LOGROS; i++) {
-                imagenesBadges[i] = nullptr;
+                //imagenesBadges[i] = nullptr;
+                imagenesBadgesRewards[i] = nullptr;
             }
 
             setWindowTitle("Minefield Mayhem - The Oppenheimer Incident");
@@ -300,6 +348,9 @@ class MenusUI : public QWidget {
             crearPaginaPerfil();
             crearPaginaCambioPassword();
             crearPaginaHighScores();
+            crearPaginaPlay();
+            crearPaginaRewards();
+            crearPaginaBadgesInfo();
 
             if (!sistemaUsuarios.cargar()) {
 
@@ -555,7 +606,7 @@ class MenusUI : public QWidget {
 
             // ACCIONES
             connect(botonPlay, &QPushButton::clicked, this, [this]() {
-                iniciarModoProgresivo();
+                mostrarPlay();
             });
 
             connect(botonSalirSesion, &QPushButton::clicked, this, [this]() {
@@ -954,6 +1005,165 @@ class MenusUI : public QWidget {
             paginas->addWidget(paginaHighScores);
         }
 
+        // PAGINA PLAY
+        void crearPaginaPlay() {
+
+            paginaPlay = new QWidget();
+            contenedorPlay = new QWidget(paginaPlay);
+
+
+            // FONDO
+            fondoPlay = new QLabel(contenedorPlay);
+            fondoPlay->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_FELIX));
+            fondoPlay->setPixmap(imagenFondo);
+
+
+            // TEXTO FELIX
+            textoPlay = new QLabel("“Adventure’s just ahead!”", contenedorPlay);
+
+            textoPlay->setAlignment(Qt::AlignCenter);
+
+            textoPlay->setStyleSheet(
+                "QLabel {"
+                "background: transparent;"
+                "color: black;"
+                "}"
+            );
+
+
+            // BOTONES DE TEXTO
+            botonNextQuest = crearBotonTexto("NEXT QUEST");
+            botonCustomMayhem = crearBotonTexto("CUSTOM MAYHEM");
+
+            botonNextQuest->setParent(contenedorPlay);
+            botonCustomMayhem->setParent(contenedorPlay);
+
+
+            // BOTONES DE IMAGEN
+            botonHomePlay = crearBotonImagen(obtenerRutaBoton("home"));
+            botonRewardsPlay = crearBotonImagen(obtenerRutaBoton("rewards"));
+            botonHighScoresPlay = crearBotonImagen(obtenerRutaBoton("high-scores"));
+
+            botonHomePlay->setParent(contenedorPlay);
+            botonRewardsPlay->setParent(contenedorPlay);
+            botonHighScoresPlay->setParent(contenedorPlay);
+
+
+            // ACCIONES
+            connect(botonHomePlay, &QPushButton::clicked, this, [this]() {
+                mostrarMenuPrincipal();
+            });
+
+            connect(botonHighScoresPlay, &QPushButton::clicked, this, [this]() {
+                mostrarHighScores();
+            });
+
+            connect(botonRewardsPlay, &QPushButton::clicked, this, [this]() {
+                mostrarRewards();
+            });
+
+            connect(botonNextQuest, &QPushButton::clicked, this, [this]() {
+                seleccionarSiguienteQuest();
+            });
+
+            connect(botonCustomMayhem, &QPushButton::clicked, this, [this]() {
+                mostrarCustomMayhem();
+            });
+
+
+            paginas->addWidget(paginaPlay);
+        }
+
+        // PAGINA REWARDS
+        void crearPaginaRewards() {
+
+            paginaRewards = new QWidget();
+            contenedorRewards = new QWidget(paginaRewards);
+
+
+            // FONDO
+            fondoRewards = new QLabel(contenedorRewards);
+            fondoRewards->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_FELIX));
+            fondoRewards->setPixmap(imagenFondo);
+
+
+            // TEXTO
+            textoRewards = new QLabel(
+                "“Earn ’em. Pin ’em. Brag about ’em!”",
+                contenedorRewards
+            );
+
+            textoRewards->setAlignment(Qt::AlignCenter);
+
+            textoRewards->setStyleSheet(
+                "QLabel {"
+                "background: transparent;"
+                "color: black;"
+                "}"
+            );
+
+
+            // BADGES
+            for (int i = 0; i < CANTIDAD_LOGROS; i++) {
+
+                imagenesBadgesRewards[i] = new QLabel(contenedorRewards);
+
+                imagenesBadgesRewards[i]->setAlignment(Qt::AlignCenter);
+                imagenesBadgesRewards[i]->setScaledContents(true);
+                imagenesBadgesRewards[i]->setStyleSheet("background: transparent;");
+            }
+
+
+            // BOTONES
+            botonBackRewards = crearBotonImagen(obtenerRutaBoton("back"));
+            botonInfoRewards = crearBotonImagen(obtenerRutaBoton("info"));
+
+            botonBackRewards->setParent(contenedorRewards);
+            botonInfoRewards->setParent(contenedorRewards);
+
+
+            // ACCIONES
+            connect(botonBackRewards, &QPushButton::clicked, this, [this]() {
+                mostrarPlay();
+            });
+
+            connect(botonInfoRewards, &QPushButton::clicked, this, [this]() {
+                mostrarBadgesInfo();
+            });
+
+
+            paginas->addWidget(paginaRewards);
+        }
+
+        // PAGINA BADGES INFO
+        void crearPaginaBadgesInfo() {
+
+            paginaBadgesInfo = new QWidget();
+            contenedorBadgesInfo = new QWidget(paginaBadgesInfo);
+
+            // FONDO
+            fondoBadgesInfo = new QLabel(contenedorBadgesInfo);
+            fondoBadgesInfo->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_BADGES_INFO));
+            fondoBadgesInfo->setPixmap(imagenFondo);
+
+            // BACK
+            botonBackBadgesInfo = crearBotonImagen(obtenerRutaBoton("back"));
+            botonBackBadgesInfo->setParent(contenedorBadgesInfo);
+
+            // ACCION
+            connect(botonBackBadgesInfo, &QPushButton::clicked, this, [this]() {
+                mostrarRewards();
+            });
+
+            paginas->addWidget(paginaBadgesInfo);
+        }
+
         // CREAR BOTON DE TEXTO
         QPushButton* crearBotonTexto(const QString &texto) {
 
@@ -1027,6 +1237,34 @@ class MenusUI : public QWidget {
             );
 
             return boton;
+        }
+
+        QPixmap convertirAGris(const QPixmap &pixmapOriginal) {
+
+            QImage imagen = pixmapOriginal.toImage().convertToFormat(QImage::Format_ARGB32);
+
+            for (int y = 0; y < imagen.height(); y++) {
+
+                for (int x = 0; x < imagen.width(); x++) {
+
+                    QRgb pixel = imagen.pixel(x, y);
+
+                    int gris = qGray(pixel);
+
+                    imagen.setPixel(
+                        x,
+                        y,
+                        qRgba(
+                            gris,
+                            gris,
+                            gris,
+                            qAlpha(pixel)
+                        )
+                    );
+                }
+            }
+
+            return QPixmap::fromImage(imagen);
         }
 
         // REPRODUCIR INTRO
@@ -1112,6 +1350,50 @@ class MenusUI : public QWidget {
             ajustarInterfaz();
         }
 
+        void mostrarPlay() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            paginas->setCurrentWidget(paginaPlay);
+
+            ajustarInterfaz();
+        }
+
+        void seleccionarSiguienteQuest() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            int numeroNivel = usuarioActual->obtenerSiguienteNivelProgresivo();
+
+            if (numeroNivel > CANTIDAD_NIVELES) {
+
+                QMessageBox::information(
+                    this,
+                    "Progressive Mode",
+                    "You have completed all 9 quests!"
+                );
+
+                return;
+            }
+
+            bool tienePartidaGuardada = ArchivoPersistencia::existePartidaGuardada(
+                usuarioActual->obtenerNombreUsuario(),
+                ModoJuego::PROGRESIVO
+            );
+
+            if (tienePartidaGuardada) {
+
+                mostrarPartidaGuardada();
+
+                return;
+            }
+
+            iniciarModoProgresivo();
+        }
 
         void iniciarModoProgresivo() {
 
@@ -1121,8 +1403,8 @@ class MenusUI : public QWidget {
 
             int numeroNivel = usuarioActual->obtenerSiguienteNivelProgresivo();
 
-            if (numeroNivel > CANTIDAD_NIVELES) {
-                numeroNivel = CANTIDAD_NIVELES;
+            if (numeroNivel < 1 || numeroNivel > CANTIDAD_NIVELES) {
+                return;
             }
 
             QWidget* ventanaJuego = crearJuegoUI(
@@ -1136,6 +1418,74 @@ class MenusUI : public QWidget {
             ventanaJuego->show();
 
             hide();
+        }
+
+        void mostrarPartidaGuardada() {
+
+            // Se implementara con el layout para:
+            // CONTINUE SAVED GAME
+            // START OVER
+        }
+
+        void mostrarRewards() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            actualizarRewards();
+
+            paginas->setCurrentWidget(paginaRewards);
+
+            ajustarInterfaz();
+        }
+
+        void actualizarRewards() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            for (int i = 0; i < CANTIDAD_LOGROS; i++) {
+
+                TipoLogro logro = static_cast<TipoLogro>(i);
+
+                string rutaBadge = obtenerRutaBadge(logro);
+
+                QPixmap badgeOriginal(
+                    QString::fromStdString(rutaBadge)
+                );
+
+
+                if (usuarioActual->tieneLogro(logro)) {
+
+                    imagenesBadgesRewards[i]->setPixmap(
+                        badgeOriginal
+                    );
+
+                } else {
+
+                    imagenesBadgesRewards[i]->setPixmap(
+                        convertirAGris(badgeOriginal)
+                    );
+                }
+
+
+                imagenesBadgesRewards[i]->show();
+            }
+        }
+
+        void mostrarBadgesInfo() {
+
+            paginas->setCurrentWidget(paginaBadgesInfo);
+
+            ajustarInterfaz();
+        }
+
+        void mostrarCustomMayhem() {
+
+            // Se implementara con el layout donde el usuario
+            // seleccionara filas y columnas del tablero personalizado.
         }
 
         void mostrarMiPerfil() {
@@ -2785,6 +3135,280 @@ class MenusUI : public QWidget {
                 }
 
                 botonHomeHighScores->raise();
+            }
+
+            // PAGINA PLAY
+            if (paginaPlay != nullptr && contenedorPlay != nullptr) {
+
+                double escalaPlayX = static_cast<double>(paginaPlay->width()) / ANCHO_DISENO_MENU;
+                double escalaPlayY = static_cast<double>(paginaPlay->height()) / ALTO_DISENO_MENU;
+
+                double escalaPlay = qMin(escalaPlayX, escalaPlayY);
+
+                // CONTENEDOR
+                contenedorPlay->setGeometry(
+                    0,
+                    0,
+                    paginaPlay->width(),
+                    paginaPlay->height()
+                );
+
+                // FONDO
+                fondoPlay->setGeometry(
+                    0,
+                    0,
+                    contenedorPlay->width(),
+                    contenedorPlay->height()
+                );
+
+                // TEXTO "ADVENTURE'S JUST AHEAD!"
+                textoPlay->setGeometry(
+                    static_cast<int>(520 * escalaPlayX),
+                    static_cast<int>(490 * escalaPlayY),
+                    static_cast<int>(1040 * escalaPlayX),
+                    static_cast<int>(110 * escalaPlayY)
+                );
+
+                QFont fuenteTextoPlay;
+
+                if (!nombreFuenteLobster.isEmpty()) {
+                    fuenteTextoPlay.setFamily(nombreFuenteLobster);
+                }
+
+                fuenteTextoPlay.setPixelSize(static_cast<int>(58 * escalaPlay));
+
+                textoPlay->setFont(fuenteTextoPlay);
+
+                // NEXT QUEST
+                botonNextQuest->setGeometry(
+                    static_cast<int>(760 * escalaPlayX),
+                    static_cast<int>(670 * escalaPlayY),
+                    static_cast<int>(560 * escalaPlayX),
+                    static_cast<int>(75 * escalaPlayY)
+                );
+
+                // CUSTOM MAYHEM
+                botonCustomMayhem->setGeometry(
+                    static_cast<int>(690 * escalaPlayX),
+                    static_cast<int>(755 * escalaPlayY),
+                    static_cast<int>(700 * escalaPlayX),
+                    static_cast<int>(75 * escalaPlayY)
+                );
+
+                QFont fuenteBotonesPlay;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteBotonesPlay.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteBotonesPlay.setBold(true);
+                fuenteBotonesPlay.setPixelSize(static_cast<int>(44 * escalaPlay));
+
+                botonNextQuest->setFont(fuenteBotonesPlay);
+                botonCustomMayhem->setFont(fuenteBotonesPlay);
+
+                // HOME
+                botonHomePlay->setGeometry(
+                    static_cast<int>(815 * escalaPlayX),
+                    static_cast<int>(840 * escalaPlayY),
+                    static_cast<int>(140 * escalaPlayX),
+                    static_cast<int>(140 * escalaPlayY)
+                );
+
+                // REWARDS
+                botonRewardsPlay->setGeometry(
+                    static_cast<int>(970 * escalaPlayX),
+                    static_cast<int>(840 * escalaPlayY),
+                    static_cast<int>(140 * escalaPlayX),
+                    static_cast<int>(140 * escalaPlayY)
+                );
+
+                // HIGH SCORES
+                botonHighScoresPlay->setGeometry(
+                    static_cast<int>(1125 * escalaPlayX),
+                    static_cast<int>(840 * escalaPlayY),
+                    static_cast<int>(140 * escalaPlayX),
+                    static_cast<int>(140 * escalaPlayY)
+                );
+
+                botonHomePlay->setIconSize(
+                    QSize(
+                        static_cast<int>(130 * escalaPlay),
+                        static_cast<int>(130 * escalaPlay)
+                    )
+                );
+
+                botonRewardsPlay->setIconSize(
+                    QSize(
+                        static_cast<int>(130 * escalaPlay),
+                        static_cast<int>(130 * escalaPlay)
+                    )
+                );
+
+                botonHighScoresPlay->setIconSize(
+                    QSize(
+                        static_cast<int>(130 * escalaPlay),
+                        static_cast<int>(130 * escalaPlay)
+                    )
+                );
+
+                fondoPlay->lower();
+
+                textoPlay->raise();
+
+                botonNextQuest->raise();
+                botonCustomMayhem->raise();
+
+                botonHomePlay->raise();
+                botonRewardsPlay->raise();
+                botonHighScoresPlay->raise();
+            }
+
+            // PAGINA REWARDS
+            if (paginaRewards != nullptr && contenedorRewards != nullptr) {
+
+                double escalaRewardsX = static_cast<double>(paginaRewards->width()) / ANCHO_DISENO_MENU;
+                double escalaRewardsY = static_cast<double>(paginaRewards->height()) / ALTO_DISENO_MENU;
+
+                double escalaRewards = qMin(escalaRewardsX, escalaRewardsY);
+
+                // CONTENEDOR
+                contenedorRewards->setGeometry(
+                    0,
+                    0,
+                    paginaRewards->width(),
+                    paginaRewards->height()
+                );
+
+                // FONDO
+                fondoRewards->setGeometry(
+                    0,
+                    0,
+                    contenedorRewards->width(),
+                    contenedorRewards->height()
+                );
+
+                // TEXTO
+                textoRewards->setGeometry(
+                    static_cast<int>(460 * escalaRewardsX),
+                    static_cast<int>(500 * escalaRewardsY),
+                    static_cast<int>(1160 * escalaRewardsX),
+                    static_cast<int>(110 * escalaRewardsY)
+                );
+
+                QFont fuenteRewards;
+
+                if (!nombreFuenteLobster.isEmpty()) {
+                    fuenteRewards.setFamily(nombreFuenteLobster);
+                }
+
+                fuenteRewards.setPixelSize(static_cast<int>(58 * escalaRewards));
+
+                textoRewards->setFont(fuenteRewards);
+
+                // BACK
+                botonBackRewards->setGeometry(
+                    static_cast<int>(150 * escalaRewardsX),
+                    static_cast<int>(485 * escalaRewardsY),
+                    static_cast<int>(145 * escalaRewardsX),
+                    static_cast<int>(145 * escalaRewardsY)
+                );
+
+                botonBackRewards->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaRewards),
+                        static_cast<int>(135 * escalaRewards)
+                    )
+                );
+
+                // INFO
+                botonInfoRewards->setGeometry(
+                    static_cast<int>(1785 * escalaRewardsX),
+                    static_cast<int>(485 * escalaRewardsY),
+                    static_cast<int>(145 * escalaRewardsX),
+                    static_cast<int>(145 * escalaRewardsY)
+                );
+
+                botonInfoRewards->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaRewards),
+                        static_cast<int>(135 * escalaRewards)
+                    )
+                );
+
+                // BADGES
+                int posicionesBadgeX[CANTIDAD_LOGROS] = {
+                    355,
+                    585,
+                    815,
+                    1045,
+                    1275,
+                    1505
+                };
+
+                for (int i = 0; i < CANTIDAD_LOGROS; i++) {
+
+                    imagenesBadgesRewards[i]->setGeometry(
+                        static_cast<int>(posicionesBadgeX[i] * escalaRewardsX),
+                        static_cast<int>(690 * escalaRewardsY),
+                        static_cast<int>(205 * escalaRewardsX),
+                        static_cast<int>(205 * escalaRewardsY)
+                    );
+                }
+
+                fondoRewards->lower();
+
+                textoRewards->raise();
+
+                for (int i = 0; i < CANTIDAD_LOGROS; i++) {
+                    imagenesBadgesRewards[i]->raise();
+                }
+
+                botonBackRewards->raise();
+                botonInfoRewards->raise();
+            }
+
+            // PAGINA BADGES INFO
+            if (paginaBadgesInfo != nullptr && contenedorBadgesInfo != nullptr) {
+
+                double escalaBadgesInfoX = static_cast<double>(paginaBadgesInfo->width()) / ANCHO_DISENO_MENU;
+                double escalaBadgesInfoY = static_cast<double>(paginaBadgesInfo->height()) / ALTO_DISENO_MENU;
+
+                double escalaBadgesInfo = qMin(escalaBadgesInfoX, escalaBadgesInfoY);
+
+                // CONTENEDOR
+                contenedorBadgesInfo->setGeometry(
+                    0,
+                    0,
+                    paginaBadgesInfo->width(),
+                    paginaBadgesInfo->height()
+                );
+
+                // TEMPLATE
+                fondoBadgesInfo->setGeometry(
+                    0,
+                    0,
+                    contenedorBadgesInfo->width(),
+                    contenedorBadgesInfo->height()
+                );
+
+                // BACK
+                botonBackBadgesInfo->setGeometry(
+                    static_cast<int>(95 * escalaBadgesInfoX),
+                    static_cast<int>(95 * escalaBadgesInfoY),
+                    static_cast<int>(145 * escalaBadgesInfoX),
+                    static_cast<int>(145 * escalaBadgesInfoY)
+                );
+
+                botonBackBadgesInfo->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaBadgesInfo),
+                        static_cast<int>(135 * escalaBadgesInfo)
+                    )
+                );
+
+                fondoBadgesInfo->lower();
+                botonBackBadgesInfo->raise();
             }
 
         }
