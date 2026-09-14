@@ -45,9 +45,9 @@ const int ALTO_MINIMO_JUEGO = 720;
 
 // ---- Zona utilizada por el tablero dentro del diseño 2080 x 1100.
 const int TABLERO_X = 95;
-const int TABLERO_Y = 345;
+const int TABLERO_Y = 360;
 const int TABLERO_ANCHO = 1890;
-const int TABLERO_ALTO = 535;
+const int TABLERO_ALTO = 520;
 
 
 // ---- Las celdas de Basico e Intermedio llegan aproximadamente a 60 px en el mockup.
@@ -96,15 +96,17 @@ class JuegoUI : public QWidget {
         Partida partida;
 
         QString nombreFuenteAlice;
+        QString nombreFuenteLobster;
 
         // STACK DE JUEGO
         QStackedWidget* paginas;
 
         QWidget* paginaBoss;
         QWidget* paginaPartida;
-
         QWidget* paginaJulius;
         QWidget* paginaDerrota;
+        QWidget* paginaSalida;
+        QWidget* paginaAyuda;
 
         // INTRO DEL BOSS
         QVideoWidget* videoBoss;
@@ -163,6 +165,19 @@ class JuegoUI : public QWidget {
         // OTROS
         bool resultadoProcesado;
 
+        // PANTALLA OPCIONES DE SALIDA
+        QWidget* contenedorSalida;
+        QLabel* fondoSalida;
+        QLabel* textoSalida;
+        QPushButton* botonBackSalida;
+        QPushButton* botonGuardarSalir;
+        QPushButton* botonSalirSinGuardar;
+
+        // PANTALLA AYUDA
+        QWidget* contenedorAyuda;
+        QLabel* fondoAyuda;
+        QPushButton* botonBackAyuda;
+
 
     public:
         JuegoUI(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo, int numeroNivel, bool configurarAutomaticamente = true, QWidget* parent = nullptr)
@@ -190,6 +205,7 @@ class JuegoUI : public QWidget {
                 contenedorDiseno(nullptr),
                 fondo(nullptr),
                 nombreFuenteAlice(""),
+                nombreFuenteLobster(""),
                 videoBanner(nullptr),
                 reproductorBanner(nullptr),
                 playlistBanner(nullptr),
@@ -209,6 +225,17 @@ class JuegoUI : public QWidget {
                 botonMusic(nullptr),
                 reproductorMusica(nullptr),
                 playlistMusica(nullptr),
+                paginaSalida(nullptr),
+                paginaAyuda(nullptr),
+                contenedorSalida(nullptr),
+                fondoSalida(nullptr),
+                textoSalida(nullptr),
+                botonBackSalida(nullptr),
+                botonGuardarSalir(nullptr),
+                botonSalirSinGuardar(nullptr),
+                contenedorAyuda(nullptr),
+                fondoAyuda(nullptr),
+                botonBackAyuda(nullptr),
                 resultadoProcesado(false) {
 
             setWindowTitle("Minefield Mayhem - The Oppenheimer Incident");
@@ -221,6 +248,35 @@ class JuegoUI : public QWidget {
             if (configurarAutomaticamente) {
                 configurarNivel(modo, numeroNivel);
             }
+
+            QTimer::singleShot(0, this, [this]() {
+
+                if (paginas != nullptr) {
+                    paginas->setGeometry(rect());
+                }
+
+                ajustarInterfaz();
+
+                if (paginaBoss != nullptr && videoBoss != nullptr) {
+
+                    videoBoss->setGeometry(
+                        0,
+                        0,
+                        paginaBoss->width(),
+                        paginaBoss->height()
+                    );
+                }
+
+                if (paginaJulius != nullptr && videoJulius != nullptr) {
+
+                    videoJulius->setGeometry(
+                        0,
+                        0,
+                        paginaJulius->width(),
+                        paginaJulius->height()
+                    );
+                }
+            });
         }
 
         ~JuegoUI() {
@@ -261,6 +317,8 @@ class JuegoUI : public QWidget {
             configurarMusica();
 
             paginas->setCurrentWidget(paginaPartida);
+
+            ajustarInterfaz();
 
             reproductorBanner->play();
             iniciarMusica();
@@ -321,12 +379,36 @@ class JuegoUI : public QWidget {
                 }
             }
 
+            int idFuenteLobster = QFontDatabase::addApplicationFont(QString::fromStdString(FONT_LOBSTER));
+
+            if (idFuenteLobster != -1) {
+
+                QStringList familias = QFontDatabase::applicationFontFamilies(idFuenteLobster);
+
+                if (!familias.isEmpty()) {
+                    nombreFuenteLobster = familias.first();
+                }
+            }
+
             paginas = new QStackedWidget(this);
 
             crearPaginaBoss();
             crearPaginaPartida();
             crearPaginaJulius();
             crearPaginaDerrota();
+            crearPaginaSalida();
+            crearPaginaAyuda();
+
+            paginas->setGeometry(rect());
+
+            paginaBoss->setGeometry(paginas->rect());
+            paginaPartida->setGeometry(paginas->rect());
+            paginaJulius->setGeometry(paginas->rect());
+            paginaDerrota->setGeometry(paginas->rect());
+            paginaSalida->setGeometry(paginas->rect());
+            paginaAyuda->setGeometry(paginas->rect());
+
+            ajustarInterfaz();
 
             timerPartida = new QTimer(this);
             timerPartida->setInterval(1000);
@@ -379,6 +461,7 @@ class JuegoUI : public QWidget {
 
             // BANNER
             videoBanner = new QVideoWidget(contenedorDiseno);
+            videoBanner->setAspectRatioMode(Qt::IgnoreAspectRatio);
             reproductorBanner = new QMediaPlayer(this);
             playlistBanner = new QMediaPlaylist(this);
 
@@ -391,7 +474,8 @@ class JuegoUI : public QWidget {
 
             // TIMER VISUAL
             labelTiempo = new QLabel(videoBanner);
-            labelTiempo->setAlignment(Qt::AlignCenter);
+
+            labelTiempo->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
             QFont fuenteTimer;
 
@@ -533,6 +617,85 @@ class JuegoUI : public QWidget {
             paginas->addWidget(paginaDerrota);
         }
 
+        // ---- PAGINA OPCIONES DE SALIDA
+        void crearPaginaSalida() {
+
+            paginaSalida = new QWidget();
+
+            contenedorSalida = new QWidget(paginaSalida);
+
+            // FONDO
+            fondoSalida = new QLabel(contenedorSalida);
+            fondoSalida->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_FELIX));
+            fondoSalida->setPixmap(imagenFondo);
+
+            // TEXTO
+            textoSalida = new QLabel(
+                "“Heading out already, kid? The minefield’ll be waitin’!”",
+                contenedorSalida
+            );
+
+            textoSalida->setAlignment(Qt::AlignCenter);
+
+            textoSalida->setStyleSheet(
+                "QLabel {"
+                "background: transparent;"
+                "color: black;"
+                "}"
+            );
+
+            // BOTONES
+            botonBackSalida = crearBotonImagen(obtenerRutaBoton("back"));
+            botonGuardarSalir = crearBotonTexto("SAVE GAME AND EXIT");
+            botonSalirSinGuardar = crearBotonTexto("EXIT");
+
+            botonBackSalida->setParent(contenedorSalida);
+            botonGuardarSalir->setParent(contenedorSalida);
+            botonSalirSinGuardar->setParent(contenedorSalida);
+
+            // ACCIONES
+            connect(botonBackSalida, &QPushButton::clicked, this, [this]() {
+                volverAPartida();
+            });
+
+            connect(botonGuardarSalir, &QPushButton::clicked, this, [this]() {
+                guardarPartidaYSalir();
+            });
+
+            connect(botonSalirSinGuardar, &QPushButton::clicked, this, [this]() {
+                salirSinGuardar();
+            });
+
+            paginas->addWidget(paginaSalida);
+        }
+
+        // ---- PAGINA AYUDA
+        void crearPaginaAyuda() {
+
+            paginaAyuda = new QWidget();
+
+            contenedorAyuda = new QWidget(paginaAyuda);
+
+            // FONDO
+            fondoAyuda = new QLabel(contenedorAyuda);
+            fondoAyuda->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_HOW_TO_PLAY_3));
+            fondoAyuda->setPixmap(imagenFondo);
+
+            // BACK
+            botonBackAyuda = crearBotonImagen(obtenerRutaBoton("back"));
+            botonBackAyuda->setParent(contenedorAyuda);
+
+            connect(botonBackAyuda, &QPushButton::clicked, this, [this]() {
+                volverAPartida();
+            });
+
+            paginas->addWidget(paginaAyuda);
+        }
+
         // ---- CONFIGURAR NIVEL
         bool configurarNivel(ModoJuego modo, int numeroNivel) {
 
@@ -640,8 +803,15 @@ class JuegoUI : public QWidget {
             }
 
             introBossFinalizada = true;
+
             reproductorBoss->stop();
+
             paginas->setCurrentWidget(paginaPartida);
+
+            // IMPORTANTE:
+            // paginaPartida ya tiene aqui sus dimensiones reales dentro del QStackedWidget.
+            ajustarInterfaz();
+
             reproductorBanner->play();
 
             // El timer comienza JUSTO cuando aparece el tablero
@@ -993,6 +1163,8 @@ class JuegoUI : public QWidget {
 
             paginas->setCurrentWidget(paginaPartida);
 
+            ajustarInterfaz();
+
             reproductorBanner->play();
             iniciarMusica();
 
@@ -1016,24 +1188,129 @@ class JuegoUI : public QWidget {
         // ---- HELP
         void mostrarAyuda() {
 
-            // TEMPORAL:
-            // Luego se sustituye por el template How To Play.
-            QMessageBox::information(
-                this,
-                "How To Play",
-                "The Help template will be integrated here."
+            if (partida.estaFinalizada()) {
+                return;
+            }
+
+            // La partida queda pausada mientras el usuario consulta la ayuda.
+            timerPartida->stop();
+
+            reproductorBanner->pause();
+            reproductorMusica->pause();
+
+            paginas->setCurrentWidget(paginaAyuda);
+
+            ajustarInterfaz();
+        }
+
+        // ---- VOLVER A LA PARTIDA
+        void volverAPartida() {
+
+            if (partida.estaFinalizada()) {
+                return;
+            }
+
+            paginas->setCurrentWidget(paginaPartida);
+
+            ajustarInterfaz();
+
+            reproductorBanner->play();
+            reproductorMusica->play();
+
+            timerPartida->start();
+        }
+
+        // ---- GUARDAR PARTIDA Y SALIR
+        void guardarPartidaYSalir() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            timerPartida->stop();
+
+            string nombreUsuario = usuarioActual->obtenerNombreUsuario();
+
+            bool guardada = ArchivoPersistencia::guardarPartida(
+                nombreUsuario,
+                partida
             );
+
+            if (!guardada) {
+
+                QMessageBox::warning(
+                    this,
+                    "Save Game",
+                    "The game could not be saved."
+                );
+
+                return;
+            }
+
+            reproductorBanner->stop();
+            reproductorMusica->stop();
+
+            close();
+        }
+
+        // ---- SALIR SIN GUARDAR
+        void salirSinGuardar() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            timerPartida->stop();
+
+            string nombreUsuario = usuarioActual->obtenerNombreUsuario();
+
+            if (
+                ArchivoPersistencia::existePartidaGuardada(
+                    nombreUsuario,
+                    modoActual
+                )
+            ) {
+
+                bool eliminada =
+                    ArchivoPersistencia::eliminarPartidaGuardada(
+                        nombreUsuario,
+                        modoActual
+                    );
+
+                if (!eliminada) {
+
+                    QMessageBox::warning(
+                        this,
+                        "Exit Game",
+                        "The saved game could not be removed."
+                    );
+
+                    return;
+                }
+            }
+
+            reproductorBanner->stop();
+            reproductorMusica->stop();
+
+            close();
         }
 
         // ---- HOME
         void mostrarOpcionesSalida() {
 
-            // TEMPORAL: Luego se sustituye por la pantalla que permitira: guardar, abandonar o cancelar.
-            QMessageBox::information(
-                this,
-                "Game Options",
-                "The Save / Leave template will be integrated here."
-            );
+            if (partida.estaFinalizada()) {
+                return;
+            }
+
+            // Pausamos la partida mientras el usuario decide.
+            timerPartida->stop();
+
+            reproductorBanner->pause();
+            reproductorMusica->pause();
+
+            paginas->setCurrentWidget(paginaSalida);
+
+            ajustarInterfaz();
         }
 
         // ---- BOTON CON IMAGEN
@@ -1052,6 +1329,31 @@ class JuegoUI : public QWidget {
 
             boton->setIcon(QIcon(QString::fromStdString(ruta)));
             boton->setIconSize(QSize(100, 100));
+
+            return boton;
+        }
+
+        // ---- BOTON DE TEXTO
+        QPushButton* crearBotonTexto(const QString &texto) {
+
+            QPushButton* boton = new QPushButton(texto);
+
+            boton->setCursor(Qt::PointingHandCursor);
+            boton->setFlat(true);
+            boton->setFocusPolicy(Qt::NoFocus);
+
+            boton->setStyleSheet(
+                "QPushButton {"
+                "background: transparent;"
+                "border: none;"
+                "outline: none;"
+                "color: black;"
+                "font-weight: bold;"
+                "}"
+                "QPushButton:hover {"
+                "color: #de461b;"
+                "}"
+            );
 
             return boton;
         }
@@ -1078,123 +1380,195 @@ class JuegoUI : public QWidget {
             columnasGraficas = 0;
         }
 
-        // ---- ESCALAR RECTANGULO
-        QRect rectanguloEscalado(int x, int y, int ancho, int alto, double escala) const {
-            return QRect(
-                static_cast<int>(x * escala),
-                static_cast<int>(y * escala),
-                static_cast<int>(ancho * escala),
-                static_cast<int>(alto * escala)
-            );
-        }
-
         // ---- AJUSTAR INTERFAZ
         void ajustarInterfaz() {
 
-            if (contenedorDiseno == nullptr) {
+            if (paginaPartida == nullptr || contenedorDiseno == nullptr) {
                 return;
             }
 
-            double escalaHorizontal = static_cast<double>(paginaPartida->width()) / ANCHO_DISENO_JUEGO;
-            double escalaVertical = static_cast<double>(paginaPartida->height()) / ALTO_DISENO_JUEGO;
+            double escalaX = static_cast<double>(paginaPartida->width()) / ANCHO_DISENO_JUEGO;
+            double escalaY = static_cast<double>(paginaPartida->height()) / ALTO_DISENO_JUEGO;
 
-            // Escalado uniforme para conservar la proporcion del mockup.
-            double escala = qMin(escalaHorizontal, escalaVertical);
+            double escalaFuente = qMin(escalaX, escalaY);
 
-            int anchoContenedor = static_cast<int>(ANCHO_DISENO_JUEGO * escala);
-            int altoContenedor = static_cast<int>(ALTO_DISENO_JUEGO * escala);
 
-            int xContenedor = (paginaPartida->width() - anchoContenedor) / 2;
-            int yContenedor = (paginaPartida->height() - altoContenedor) / 2;
+            // -------------------------------------------------------------------------
+            // PAGINA PARTIDA
+            // -------------------------------------------------------------------------
 
-            contenedorDiseno->setGeometry(xContenedor, yContenedor, anchoContenedor, altoContenedor);
-
-            // ---- FONDO
-            fondo->setGeometry(0, 0, anchoContenedor, altoContenedor);
-
-            // ---- BANNER SUPERIOR
-            videoBanner->setGeometry(rectanguloEscalado(110, 145, 1860, 170, escala));
-
-            // ---- TIMER
-            labelTiempo->setGeometry(static_cast<int>(15 * escala), static_cast<int>(30 * escala), static_cast<int>(280 * escala), static_cast<int>(100 * escala));
-
-            QFont fuente = labelTiempo->font();
-
-            fuente.setPixelSize( static_cast<int>(58 * escala ));
-
-            labelTiempo->setFont(fuente);
-            labelTiempo->raise();
-
-            // ---- TABLERO
-            int anchoTableroBase = columnasGraficas * tamanoCeldaBase + (columnasGraficas - 1) * SEPARACION_CELDAS;
-            int altoTableroBase = filasGraficas * tamanoCeldaBase + (filasGraficas - 1) * SEPARACION_CELDAS;
-
-            int xTableroBase = TABLERO_X + (TABLERO_ANCHO - anchoTableroBase) / 2;
-            int yTableroBase = TABLERO_Y + (TABLERO_ALTO - altoTableroBase) / 2;
-
-            vistaTablero->setGeometry(
-                rectanguloEscalado(
-                    xTableroBase,
-                    yTableroBase,
-                    anchoTableroBase,
-                    altoTableroBase,
-                    escala
-                )
+            // CONTENEDOR
+            contenedorDiseno->setGeometry(
+                0,
+                0,
+                paginaPartida->width(),
+                paginaPartida->height()
             );
 
-            vistaTablero->fitInView(escenaTablero->sceneRect(), Qt::KeepAspectRatio);
+            // TEMPLATE
+            fondo->setGeometry(
+                0,
+                0,
+                contenedorDiseno->width(),
+                contenedorDiseno->height()
+            );
 
-            // ---- BOTONES
-            int tamanoBoton = 110;
-            int separacion = 25;
+            // -------------------------------------------------------------------------
+            // BANNER SUPERIOR
+            // -------------------------------------------------------------------------
 
-            int anchoGrupo = tamanoBoton * 4 + separacion * 3;
-            int xBotones = (ANCHO_DISENO_JUEGO - anchoGrupo) / 2;
-            int yBotones = 895;
+            videoBanner->setGeometry(
+                static_cast<int>(95 * escalaX),
+                static_cast<int>(145 * escalaY),
+                static_cast<int>(1890 * escalaX),
+                static_cast<int>(175 * escalaY)
+            );
+
+            // -------------------------------------------------------------------------
+            // TIMER
+            // El timer es hijo del videoBanner, por eso estas coordenadas son locales
+            // al banner.
+            // -------------------------------------------------------------------------
+
+            labelTiempo->setGeometry(
+                0,
+                0,
+                static_cast<int>(350 * escalaX),
+                videoBanner->height()
+            );
+
+            labelTiempo->setContentsMargins(
+                static_cast<int>(30 * escalaX),
+                0,
+                0,
+                0
+            );
+
+            QFont fuenteTimer = labelTiempo->font();
+
+            fuenteTimer.setPixelSize(static_cast<int>(58 * escalaFuente));
+
+            labelTiempo->setFont(fuenteTimer);
+            labelTiempo->raise();
+
+            // -------------------------------------------------------------------------
+            // TABLERO
+            // -------------------------------------------------------------------------
+
+            if (filasGraficas > 0 && columnasGraficas > 0 && !escenaTablero->sceneRect().isEmpty()) {
+
+                int anchoTableroBase = columnasGraficas * tamanoCeldaBase + (columnasGraficas - 1) * SEPARACION_CELDAS;
+
+                int altoTableroBase = filasGraficas * tamanoCeldaBase + (filasGraficas - 1) * SEPARACION_CELDAS;
+
+                int xTableroBase = TABLERO_X + (TABLERO_ANCHO - anchoTableroBase) / 2;
+
+                int yTableroBase = TABLERO_Y + (TABLERO_ALTO - altoTableroBase) / 2;
+
+                // La POSICION sigue la escala completa del template.
+                int centroTableroX = static_cast<int>(
+                    (xTableroBase + anchoTableroBase / 2.0) * escalaX
+                );
+
+                int centroTableroY = static_cast<int>(
+                    (yTableroBase + altoTableroBase / 2.0) * escalaY
+                );
+
+                // Las CELDAS deben continuar siendo cuadradas.
+                double escalaTablero = qMin(escalaX, escalaY);
+
+                int anchoTableroVisible = static_cast<int>(
+                    anchoTableroBase * escalaTablero
+                );
+
+                int altoTableroVisible = static_cast<int>(
+                    altoTableroBase * escalaTablero
+                );
+
+                vistaTablero->setGeometry(
+                    centroTableroX - anchoTableroVisible / 2,
+                    centroTableroY - altoTableroVisible / 2,
+                    anchoTableroVisible,
+                    altoTableroVisible
+                );
+
+                vistaTablero->resetTransform();
+
+                vistaTablero->fitInView(
+                    escenaTablero->sceneRect(),
+                    Qt::KeepAspectRatio
+                );
+
+                vistaTablero->centerOn(
+                    escenaTablero->sceneRect().center()
+                );
+            }
+
+            // -------------------------------------------------------------------------
+            // BOTONES INFERIORES
+            // -------------------------------------------------------------------------
+
+            int tamanoBotonBase = 110;
+            int separacionBase = 25;
+
+            int anchoGrupoBase =
+                tamanoBotonBase * 4 +
+                separacionBase * 3;
+
+            int xGrupoBase = (ANCHO_DISENO_JUEGO - anchoGrupoBase) / 2;
+
+            int yGrupoBase = 895;
+
+            int tamanoBotonVisible = static_cast<int>(
+                tamanoBotonBase * escalaFuente
+            );
+
+            int separacionVisible = static_cast<int>(
+                separacionBase * escalaFuente
+            );
+
+            int centroGrupoX = static_cast<int>(
+                (xGrupoBase + anchoGrupoBase / 2.0) * escalaX
+            );
+
+            int anchoGrupoVisible = tamanoBotonVisible * 4 + separacionVisible * 3;
+
+            int xGrupoVisible = centroGrupoX - anchoGrupoVisible / 2;
+
+            int yGrupoVisible = static_cast<int>(yGrupoBase * escalaY);
+
 
             botonHome->setGeometry(
-                rectanguloEscalado(
-                    xBotones,
-                    yBotones,
-                    tamanoBoton,
-                    tamanoBoton,
-                    escala
-                )
+                xGrupoVisible,
+                yGrupoVisible,
+                tamanoBotonVisible,
+                tamanoBotonVisible
             );
 
             botonRetry->setGeometry(
-                rectanguloEscalado(
-                    xBotones + tamanoBoton + separacion,
-                    yBotones,
-                    tamanoBoton,
-                    tamanoBoton,
-                    escala
-                )
+                xGrupoVisible + tamanoBotonVisible + separacionVisible,
+                yGrupoVisible,
+                tamanoBotonVisible,
+                tamanoBotonVisible
             );
 
             botonHelp->setGeometry(
-                rectanguloEscalado(
-                    xBotones + (tamanoBoton + separacion) * 2,
-                    yBotones,
-                    tamanoBoton,
-                    tamanoBoton,
-                    escala
-                )
+                xGrupoVisible + (tamanoBotonVisible + separacionVisible) * 2,
+                yGrupoVisible,
+                tamanoBotonVisible,
+                tamanoBotonVisible
             );
 
             botonMusic->setGeometry(
-                rectanguloEscalado(
-                    xBotones + (tamanoBoton + separacion) * 3,
-                    yBotones,
-                    tamanoBoton,
-                    tamanoBoton,
-                    escala
-                )
+                xGrupoVisible + (tamanoBotonVisible + separacionVisible) * 3,
+                yGrupoVisible,
+                tamanoBotonVisible,
+                tamanoBotonVisible
             );
 
             QSize iconoEscalado(
-                static_cast<int>(100 * escala),
-                static_cast<int>(100 * escala)
+                static_cast<int>(100 * escalaFuente),
+                static_cast<int>(100 * escalaFuente)
             );
 
             botonHome->setIconSize(iconoEscalado);
@@ -1202,37 +1576,54 @@ class JuegoUI : public QWidget {
             botonHelp->setIconSize(iconoEscalado);
             botonMusic->setIconSize(iconoEscalado);
 
+            fondo->lower();
 
-            // ---- PANTALLA LEVEL FAILED
+            videoBanner->raise();
+            vistaTablero->raise();
+
+            botonHome->raise();
+            botonRetry->raise();
+            botonHelp->raise();
+            botonMusic->raise();
+
+            // -------------------------------------------------------------------------
+            // PAGINA LEVEL FAILED
+            // -------------------------------------------------------------------------
+
             if (paginaDerrota != nullptr && contenedorDerrota != nullptr) {
 
-                double escalaDerrotaHorizontal = static_cast<double>(paginaDerrota->width()) / ANCHO_DISENO_JUEGO;
-                double escalaDerrotaVertical = static_cast<double>(paginaDerrota->height()) / ALTO_DISENO_JUEGO;
+                double escalaDerrotaX = static_cast<double>(paginaDerrota->width()) / ANCHO_DISENO_JUEGO;
 
-                double escalaDerrota = qMin(escalaDerrotaHorizontal, escalaDerrotaVertical);
+                double escalaDerrotaY = static_cast<double>(paginaDerrota->height()) / ALTO_DISENO_JUEGO;
 
-                int anchoDerrota = static_cast<int>(ANCHO_DISENO_JUEGO * escalaDerrota);
-                int altoDerrota = static_cast<int>(ALTO_DISENO_JUEGO * escalaDerrota);
+                double escalaDerrotaFuente = qMin(escalaDerrotaX, escalaDerrotaY);
 
-                int xDerrota = (paginaDerrota->width() - anchoDerrota) / 2;
-                int yDerrota = (paginaDerrota->height() - altoDerrota) / 2;
+                contenedorDerrota->setGeometry(
+                    0,
+                    0,
+                    paginaDerrota->width(),
+                    paginaDerrota->height()
+                );
 
-                contenedorDerrota->setGeometry(xDerrota, yDerrota, anchoDerrota, altoDerrota);
-
-                fondoDerrota->setGeometry(0, 0, anchoDerrota, altoDerrota);
+                fondoDerrota->setGeometry(
+                    0,
+                    0,
+                    contenedorDerrota->width(),
+                    contenedorDerrota->height()
+                );
 
                 botonRetryDerrota->setGeometry(
-                    static_cast<int>(790 * escalaDerrota),
-                    static_cast<int>(710 * escalaDerrota),
-                    static_cast<int>(500 * escalaDerrota),
-                    static_cast<int>(90 * escalaDerrota)
+                    static_cast<int>(790 * escalaDerrotaX),
+                    static_cast<int>(710 * escalaDerrotaY),
+                    static_cast<int>(500 * escalaDerrotaX),
+                    static_cast<int>(90 * escalaDerrotaY)
                 );
 
                 botonQuitDerrota->setGeometry(
-                    static_cast<int>(740 * escalaDerrota),
-                    static_cast<int>(825 * escalaDerrota),
-                    static_cast<int>(600 * escalaDerrota),
-                    static_cast<int>(90 * escalaDerrota)
+                    static_cast<int>(740 * escalaDerrotaX),
+                    static_cast<int>(825 * escalaDerrotaY),
+                    static_cast<int>(600 * escalaDerrotaX),
+                    static_cast<int>(90 * escalaDerrotaY)
                 );
 
                 QFont fuenteDerrota;
@@ -1242,10 +1633,168 @@ class JuegoUI : public QWidget {
                 }
 
                 fuenteDerrota.setBold(true);
-                fuenteDerrota.setPixelSize(static_cast<int>(52 * escalaDerrota));
+
+                fuenteDerrota.setPixelSize(
+                    static_cast<int>(52 * escalaDerrotaFuente)
+                );
 
                 botonRetryDerrota->setFont(fuenteDerrota);
                 botonQuitDerrota->setFont(fuenteDerrota);
+
+                fondoDerrota->lower();
+
+                botonRetryDerrota->raise();
+                botonQuitDerrota->raise();
+            }
+
+            // -------------------------------------------------------------------------
+            // PAGINA OPCIONES DE SALIDA
+            // -------------------------------------------------------------------------
+
+            if (paginaSalida != nullptr && contenedorSalida != nullptr) {
+
+                double escalaSalidaX = static_cast<double>(paginaSalida->width()) / ANCHO_DISENO_JUEGO;
+
+                double escalaSalidaY = static_cast<double>(paginaSalida->height()) / ALTO_DISENO_JUEGO;
+
+                double escalaSalidaFuente = qMin(escalaSalidaX, escalaSalidaY);
+
+                // CONTENEDOR
+                contenedorSalida->setGeometry(
+                    0,
+                    0,
+                    paginaSalida->width(),
+                    paginaSalida->height()
+                );
+
+                // TEMPLATE
+                fondoSalida->setGeometry(
+                    0,
+                    0,
+                    contenedorSalida->width(),
+                    contenedorSalida->height()
+                );
+
+                // TEXTO FELIX
+                textoSalida->setGeometry(
+                    static_cast<int>(250 * escalaSalidaX),
+                    static_cast<int>(500 * escalaSalidaY),
+                    static_cast<int>(1580 * escalaSalidaX),
+                    static_cast<int>(110 * escalaSalidaY)
+                );
+
+                QFont fuenteSalida;
+
+                if (!nombreFuenteLobster.isEmpty()) {
+                    fuenteSalida.setFamily(nombreFuenteLobster);
+                }
+
+                fuenteSalida.setPixelSize(
+                    static_cast<int>(58 * escalaSalidaFuente)
+                );
+
+                textoSalida->setFont(fuenteSalida);
+
+                // BACK
+                botonBackSalida->setGeometry(
+                    static_cast<int>(120 * escalaSalidaX),
+                    static_cast<int>(115 * escalaSalidaY),
+                    static_cast<int>(145 * escalaSalidaX),
+                    static_cast<int>(145 * escalaSalidaY)
+                );
+
+                botonBackSalida->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaSalidaFuente),
+                        static_cast<int>(135 * escalaSalidaFuente)
+                    )
+                );
+
+                // SAVE GAME AND EXIT
+                botonGuardarSalir->setGeometry(
+                    static_cast<int>(610 * escalaSalidaX),
+                    static_cast<int>(700 * escalaSalidaY),
+                    static_cast<int>(860 * escalaSalidaX),
+                    static_cast<int>(90 * escalaSalidaY)
+                );
+
+                // EXIT
+                botonSalirSinGuardar->setGeometry(
+                    static_cast<int>(790 * escalaSalidaX),
+                    static_cast<int>(815 * escalaSalidaY),
+                    static_cast<int>(500 * escalaSalidaX),
+                    static_cast<int>(90 * escalaSalidaY)
+                );
+
+                QFont fuenteBotonesSalida;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteBotonesSalida.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteBotonesSalida.setBold(true);
+
+                fuenteBotonesSalida.setPixelSize(
+                    static_cast<int>(48 * escalaSalidaFuente)
+                );
+
+                botonGuardarSalir->setFont(fuenteBotonesSalida);
+                botonSalirSinGuardar->setFont(fuenteBotonesSalida);
+
+                fondoSalida->lower();
+
+                textoSalida->raise();
+
+                botonBackSalida->raise();
+                botonGuardarSalir->raise();
+                botonSalirSinGuardar->raise();
+            }
+
+            // -------------------------------------------------------------------------
+            // PAGINA AYUDA
+            // -------------------------------------------------------------------------
+
+            if (paginaAyuda != nullptr && contenedorAyuda != nullptr) {
+
+                double escalaAyudaX = static_cast<double>(paginaAyuda->width()) / ANCHO_DISENO_JUEGO;
+
+                double escalaAyudaY = static_cast<double>(paginaAyuda->height()) / ALTO_DISENO_JUEGO;
+
+                double escalaAyuda = qMin(escalaAyudaX, escalaAyudaY);
+
+                // CONTENEDOR
+                contenedorAyuda->setGeometry(
+                    0,
+                    0,
+                    paginaAyuda->width(),
+                    paginaAyuda->height()
+                );
+
+                // TEMPLATE
+                fondoAyuda->setGeometry(
+                    0,
+                    0,
+                    contenedorAyuda->width(),
+                    contenedorAyuda->height()
+                );
+
+                // BACK
+                botonBackAyuda->setGeometry(
+                    static_cast<int>(95 * escalaAyudaX),
+                    static_cast<int>(95 * escalaAyudaY),
+                    static_cast<int>(145 * escalaAyudaX),
+                    static_cast<int>(145 * escalaAyudaY)
+                );
+
+                botonBackAyuda->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaAyuda),
+                        static_cast<int>(135 * escalaAyuda)
+                    )
+                );
+
+                fondoAyuda->lower();
+                botonBackAyuda->raise();
             }
 
         }
@@ -1258,23 +1807,41 @@ class JuegoUI : public QWidget {
             return QUrl::fromLocalFile(archivo.absoluteFilePath());
         }
 
-
     protected:
+
         // ---- RESIZE
         void resizeEvent(QResizeEvent* evento) override {
 
             QWidget::resizeEvent(evento);
 
             if (paginas != nullptr) {
-                paginas->setGeometry(rect());
+
+                paginas->setGeometry(
+                    0,
+                    0,
+                    width(),
+                    height()
+                );
             }
 
             if (paginaBoss != nullptr && videoBoss != nullptr) {
-                videoBoss->setGeometry(0, 0, paginaBoss->width(), paginaBoss->height());
+
+                videoBoss->setGeometry(
+                    0,
+                    0,
+                    paginaBoss->width(),
+                    paginaBoss->height()
+                );
             }
 
             if (paginaJulius != nullptr && videoJulius != nullptr) {
-                videoJulius->setGeometry(0, 0, paginaJulius->width(), paginaJulius->height());
+
+                videoJulius->setGeometry(
+                    0,
+                    0,
+                    paginaJulius->width(),
+                    paginaJulius->height()
+                );
             }
 
             ajustarInterfaz();
