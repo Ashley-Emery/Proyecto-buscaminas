@@ -29,7 +29,7 @@ add_executable(Proyecto-buscaminas
     MenusUI.cpp
 )
 
-target_link_libraries(Proyecto-buscaminas
+target_link_libraries(Proyecto-buscaminas PRIVATE
     Qt5::Widgets
     Qt5::Multimedia
     Qt5::MultimediaWidgets
