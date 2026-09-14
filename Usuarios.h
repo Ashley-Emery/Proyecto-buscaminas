@@ -78,6 +78,7 @@ class SistemaUsuarios {
         bool guardar() const;
 
         bool registrarUsuario(const string &nombreUsuario, const string &contrasena, string &mensajeError);
+        bool cambiarContrasenaUsuario(Usuario &usuario, const string &contrasenaAnterior, const string &contrasenaNueva, string &mensajeError);
 
         Usuario* iniciarSesion(const string &nombreUsuario, const string &contrasena) const;
         Usuario* buscarUsuario(const string &nombreUsuario) const;

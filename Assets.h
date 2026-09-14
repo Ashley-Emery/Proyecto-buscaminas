@@ -34,6 +34,13 @@ const string BADGE_CLEAN_SWEEP = "assets/badges/6.png";
 
 
 // -----------------------------------------------------------------------------
+// RANKING
+// -----------------------------------------------------------------------------
+
+const string RANKING_BOMB_SQUAD = "assets/templates/bomb-squad.png";
+
+
+// -----------------------------------------------------------------------------
 // BOTONES DE ACCION
 // -----------------------------------------------------------------------------
 const string BOTON_ACCEPT = "assets/buttons/accept.png";
@@ -147,7 +154,9 @@ const string ANIMACION_TO_THE_RESCUE = "assets/animations/to-the-rescue.mp4";
 // -----------------------------------------------------------------------------
 
 string obtenerRutaAvatar(int numeroAvatar);
+
 string obtenerRutaAvatar(const string &nombreAvatar);
+
 bool avatarValido(const string &nombreAvatar);
 
 string obtenerRutaBadge(TipoLogro logro);
@@ -155,7 +164,9 @@ string obtenerRutaBadge(TipoLogro logro);
 string obtenerRutaBoton(const string &accion);
 
 string obtenerRutaNumeroCelda(int numeroMinasVecinas);
+
 string obtenerRutaCelda(const Celda &celda);
+
 string obtenerRutaBombaExplotada();
 
 string obtenerRutaFuente(const string &nombreFuente);
@@ -167,8 +178,11 @@ string obtenerRutaMusica(const string &nombreMusica);
 string obtenerRutaTemplate(const string &nombreTemplate);
 
 string obtenerRutaVideoBoss(BossNivel boss);
+
 string obtenerRutaVideoBoss(BossPersonalizado boss);
 
 string obtenerRutaAnimacion(const string &nombreAnimacion);
+
+string obtenerRutaRanking(const string &elemento);
 
 #endif

@@ -55,6 +55,10 @@ class MenusUI : public QWidget {
         QWidget* paginaMenuPrincipal;
         QWidget* paginaMapa;
         QWidget* paginaHuevoPascua;
+        QWidget* paginaComoJugar;
+        QWidget* paginaPerfil;
+        QWidget* paginaCambioPassword;
+        QWidget* paginaHighScores;
 
         // INTRO
         QVideoWidget* videoIntro;
@@ -118,6 +122,48 @@ class MenusUI : public QWidget {
         QPushButton* botonClaimReward;
         QPushButton* botonHomeHuevoPascua;
 
+        // HOW TO PLAY
+        QWidget* contenedorComoJugar;
+        QLabel* fondoComoJugar;
+        QPushButton* botonAdelanteComoJugar;
+        QPushButton* botonAtrasComoJugar;
+        QPushButton* botonHomeComoJugar;
+        int paginaComoJugarActual;
+
+        // MY PROFILE
+        QWidget* contenedorPerfil;
+        QLabel* fondoPerfil;
+        QLabel* imagenAvatarPerfil;
+        QLabel* textoUsernamePerfil;
+        QPushButton* botonAvatarAnterior;
+        QPushButton* botonAvatarSiguiente;
+        QPushButton* botonAceptarPerfil;
+        QPushButton* botonCancelarPerfil;
+        QPushButton* botonCambiarPassword;
+        int avatarPerfilSeleccionado;
+
+        // CHANGE PASSWORD
+        QWidget* contenedorCambioPassword;
+        QLabel* fondoCambioPassword;
+        QLabel* imagenAvatarCambioPassword;
+        QLabel* textoOldPassword;
+        QLabel* textoNewPassword;
+        QLineEdit* campoOldPassword;
+        QLineEdit* campoNewPassword;
+        QPushButton* botonAceptarCambioPassword;
+        QPushButton* botonCancelarCambioPassword;
+
+        // HIGH SCORES
+        QWidget* contenedorHighScores;
+        QLabel* fondoHighScores;
+        QLabel* imagenRanking;
+        QLabel* textoTituloMiScore;
+        QLabel* textoMiScore;
+        QLabel* textoTituloMedallas;
+        QLabel* textosRankingUsuario[CANTIDAD_RANKING];
+        QLabel* textosRankingPuntaje[CANTIDAD_RANKING];
+        QLabel* imagenesBadges[CANTIDAD_LOGROS];
+        QPushButton* botonHomeHighScores;
 
     public:
 
@@ -171,10 +217,55 @@ class MenusUI : public QWidget {
                 textoHuevoPascua(nullptr),
                 botonClaimReward(nullptr),
                 botonHomeHuevoPascua(nullptr),
+                paginaComoJugar(nullptr),
+                contenedorComoJugar(nullptr),
+                fondoComoJugar(nullptr),
+                botonAdelanteComoJugar(nullptr),
+                botonAtrasComoJugar(nullptr),
+                botonHomeComoJugar(nullptr),
+                paginaComoJugarActual(1),
+                paginaPerfil(nullptr),
+                contenedorPerfil(nullptr),
+                fondoPerfil(nullptr),
+                imagenAvatarPerfil(nullptr),
+                textoUsernamePerfil(nullptr),
+                botonAvatarAnterior(nullptr),
+                botonAvatarSiguiente(nullptr),
+                botonAceptarPerfil(nullptr),
+                botonCancelarPerfil(nullptr),
+                botonCambiarPassword(nullptr),
+                avatarPerfilSeleccionado(1),
+                paginaCambioPassword(nullptr),
+                contenedorCambioPassword(nullptr),
+                fondoCambioPassword(nullptr),
+                imagenAvatarCambioPassword(nullptr),
+                textoOldPassword(nullptr),
+                textoNewPassword(nullptr),
+                campoOldPassword(nullptr),
+                campoNewPassword(nullptr),
+                botonAceptarCambioPassword(nullptr),
+                botonCancelarCambioPassword(nullptr),
+                paginaHighScores(nullptr),
+                contenedorHighScores(nullptr),
+                fondoHighScores(nullptr),
+                imagenRanking(nullptr),
+                textoTituloMiScore(nullptr),
+                textoMiScore(nullptr),
+                textoTituloMedallas(nullptr),
+                botonHomeHighScores(nullptr),
                 botonExit(nullptr) {
 
             for (int i = 0; i < CANTIDAD_NIVELES; i++) {
                 botonesNivelMapa[i] = nullptr;
+            }
+
+            for (int i = 0; i < CANTIDAD_RANKING; i++) {
+                textosRankingUsuario[i] = nullptr;
+                textosRankingPuntaje[i] = nullptr;
+            }
+
+            for (int i = 0; i < CANTIDAD_LOGROS; i++) {
+                imagenesBadges[i] = nullptr;
             }
 
             setWindowTitle("Minefield Mayhem - The Oppenheimer Incident");
@@ -205,6 +296,10 @@ class MenusUI : public QWidget {
             crearPaginaMenuPrincipal();
             crearPaginaMapa();
             crearPaginaHuevoPascua();
+            crearPaginaComoJugar();
+            crearPaginaPerfil();
+            crearPaginaCambioPassword();
+            crearPaginaHighScores();
 
             if (!sistemaUsuarios.cargar()) {
 
@@ -594,7 +689,270 @@ class MenusUI : public QWidget {
             paginas->addWidget(paginaHuevoPascua);
         }
 
+        // PAGINA HOW TO PLAY
+        void crearPaginaComoJugar() {
 
+            paginaComoJugar = new QWidget();
+            contenedorComoJugar = new QWidget(paginaComoJugar);
+
+
+            // FONDO
+            fondoComoJugar = new QLabel(contenedorComoJugar);
+            fondoComoJugar->setScaledContents(true);
+
+
+            // BOTONES
+            botonAdelanteComoJugar = crearBotonImagen(obtenerRutaBoton("forward"));
+            botonAtrasComoJugar = crearBotonImagen(obtenerRutaBoton("back"));
+            botonHomeComoJugar = crearBotonImagen(obtenerRutaBoton("home"));
+
+            botonAdelanteComoJugar->setParent(contenedorComoJugar);
+            botonAtrasComoJugar->setParent(contenedorComoJugar);
+            botonHomeComoJugar->setParent(contenedorComoJugar);
+
+
+            // ACCIONES
+            connect(botonAdelanteComoJugar, &QPushButton::clicked, this, [this]() {
+                avanzarComoJugar();
+            });
+
+            connect(botonAtrasComoJugar, &QPushButton::clicked, this, [this]() {
+                retrocederComoJugar();
+            });
+
+            connect(botonHomeComoJugar, &QPushButton::clicked, this, [this]() {
+                mostrarMenuPrincipal();
+            });
+
+
+            paginas->addWidget(paginaComoJugar);
+        }
+
+        // PAGINA MY PROFILE
+        void crearPaginaPerfil() {
+
+            paginaPerfil = new QWidget();
+            contenedorPerfil = new QWidget(paginaPerfil);
+
+
+            // FONDO
+            fondoPerfil = new QLabel(contenedorPerfil);
+            fondoPerfil->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_BOX));
+            fondoPerfil->setPixmap(imagenFondo);
+
+
+            // AVATAR
+            imagenAvatarPerfil = new QLabel(contenedorPerfil);
+            imagenAvatarPerfil->setAlignment(Qt::AlignCenter);
+            imagenAvatarPerfil->setScaledContents(true);
+            imagenAvatarPerfil->setStyleSheet("background: transparent;");
+
+
+            // USERNAME
+            textoUsernamePerfil = new QLabel(contenedorPerfil);
+            textoUsernamePerfil->setAlignment(Qt::AlignCenter);
+            textoUsernamePerfil->setStyleSheet(
+                "QLabel {"
+                "background: transparent;"
+                "color: black;"
+                "font-weight: bold;"
+                "}"
+            );
+
+            // FLECHAS DE AVATAR
+            botonAvatarAnterior = crearBotonImagen(obtenerRutaBoton("back"));
+            botonAvatarSiguiente = crearBotonImagen(obtenerRutaBoton("forward"));
+
+            botonAvatarAnterior->setParent(contenedorPerfil);
+            botonAvatarSiguiente->setParent(contenedorPerfil);
+
+            // ACCEPT / CANCEL
+            botonAceptarPerfil = crearBotonImagen(obtenerRutaBoton("accept"));
+            botonCancelarPerfil = crearBotonImagen(obtenerRutaBoton("cancel"));
+
+            botonAceptarPerfil->setParent(contenedorPerfil);
+            botonCancelarPerfil->setParent(contenedorPerfil);
+
+            // CHANGE PASSWORD
+            botonCambiarPassword = crearBotonTexto("CHANGE PASSWORD");
+            botonCambiarPassword->setParent(contenedorPerfil);
+
+            // ACCIONES
+            connect(botonAvatarAnterior, &QPushButton::clicked, this, [this]() {
+                avatarAnteriorPerfil();
+            });
+
+            connect(botonAvatarSiguiente, &QPushButton::clicked, this, [this]() {
+                avatarSiguientePerfil();
+            });
+
+            connect(botonAceptarPerfil, &QPushButton::clicked, this, [this]() {
+                guardarCambiosPerfil();
+            });
+
+            connect(botonCancelarPerfil, &QPushButton::clicked, this, [this]() {
+                cancelarCambiosPerfil();
+            });
+
+            connect(botonCambiarPassword, &QPushButton::clicked, this, [this]() {
+                mostrarCambioPassword();
+            });
+
+
+            paginas->addWidget(paginaPerfil);
+        }
+
+        // PAGINA CHANGE PASSWORD
+        void crearPaginaCambioPassword() {
+
+            paginaCambioPassword = new QWidget();
+            contenedorCambioPassword = new QWidget(paginaCambioPassword);
+
+            // FONDO
+            fondoCambioPassword = new QLabel(contenedorCambioPassword);
+            fondoCambioPassword->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_BOX));
+            fondoCambioPassword->setPixmap(imagenFondo);
+
+            // AVATAR
+            imagenAvatarCambioPassword = new QLabel(contenedorCambioPassword);
+            imagenAvatarCambioPassword->setAlignment(Qt::AlignCenter);
+            imagenAvatarCambioPassword->setScaledContents(true);
+            imagenAvatarCambioPassword->setStyleSheet("background: transparent;");
+
+            // TEXTOS
+            textoOldPassword = new QLabel("Old Password", contenedorCambioPassword);
+            textoNewPassword = new QLabel("New Password", contenedorCambioPassword);
+
+            textoOldPassword->setAlignment(Qt::AlignCenter);
+            textoNewPassword->setAlignment(Qt::AlignCenter);
+
+            textoOldPassword->setStyleSheet("background: transparent; color: black;");
+            textoNewPassword->setStyleSheet("background: transparent; color: black;");
+
+            // CAMPOS
+            campoOldPassword = new QLineEdit(contenedorCambioPassword);
+            campoNewPassword = new QLineEdit(contenedorCambioPassword);
+
+            campoOldPassword->setEchoMode(QLineEdit::Password);
+            campoNewPassword->setEchoMode(QLineEdit::Password);
+
+            QString estiloCampoPassword =
+                "QLineEdit {"
+                "background-color: #fff5e6;"
+                "border: none;"
+                "padding-left: 12px;"
+                "color: black;"
+                "}";
+
+            campoOldPassword->setStyleSheet(estiloCampoPassword);
+            campoNewPassword->setStyleSheet(estiloCampoPassword);
+
+            // BOTONES
+            botonAceptarCambioPassword = crearBotonImagen(obtenerRutaBoton("accept"));
+            botonCancelarCambioPassword = crearBotonImagen(obtenerRutaBoton("cancel"));
+
+            botonAceptarCambioPassword->setParent(contenedorCambioPassword);
+            botonCancelarCambioPassword->setParent(contenedorCambioPassword);
+
+            // ACCIONES
+            connect(botonAceptarCambioPassword, &QPushButton::clicked, this, [this]() {
+                guardarCambioPassword();
+            });
+
+            connect(botonCancelarCambioPassword, &QPushButton::clicked, this, [this]() {
+                cancelarCambioPassword();
+            });
+
+            connect(campoOldPassword, &QLineEdit::returnPressed, this, [this]() {
+                guardarCambioPassword();
+            });
+
+            connect(campoNewPassword, &QLineEdit::returnPressed, this, [this]() {
+                guardarCambioPassword();
+            });
+
+            paginas->addWidget(paginaCambioPassword);
+        }
+
+        // PAGINA HIGH SCORES
+        void crearPaginaHighScores() {
+
+            paginaHighScores = new QWidget();
+            contenedorHighScores = new QWidget(paginaHighScores);
+
+
+            // FONDO
+            fondoHighScores = new QLabel(contenedorHighScores);
+            fondoHighScores->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_CLEAN_2));
+            fondoHighScores->setPixmap(imagenFondo);
+
+
+            // IMAGEN DEL RANKING
+            imagenRanking = new QLabel(contenedorHighScores);
+            imagenRanking->setAlignment(Qt::AlignCenter);
+            imagenRanking->setScaledContents(true);
+            imagenRanking->setStyleSheet("background: transparent;");
+
+            QPixmap ranking(QString::fromStdString(obtenerRutaRanking("bomb-squad")));
+            imagenRanking->setPixmap(ranking);
+
+
+            // TITULOS
+            textoTituloMiScore = new QLabel("My Score", contenedorHighScores);
+            textoMiScore = new QLabel(contenedorHighScores);
+            textoTituloMedallas = new QLabel("MY MAYHEM MEDALS", contenedorHighScores);
+
+            textoTituloMiScore->setAlignment(Qt::AlignCenter);
+            textoMiScore->setAlignment(Qt::AlignCenter);
+            textoTituloMedallas->setAlignment(Qt::AlignCenter);
+
+            textoTituloMiScore->setStyleSheet("background: transparent; color: black;");
+            textoMiScore->setStyleSheet("background: transparent; color: #215960;");
+            textoTituloMedallas->setStyleSheet("background: transparent; color: black;");
+
+
+            // TOP 5
+            for (int i = 0; i < CANTIDAD_RANKING; i++) {
+
+                textosRankingUsuario[i] = new QLabel(contenedorHighScores);
+                textosRankingPuntaje[i] = new QLabel(contenedorHighScores);
+
+                textosRankingUsuario[i]->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+                textosRankingPuntaje[i]->setAlignment(Qt::AlignCenter);
+
+                textosRankingUsuario[i]->setStyleSheet("background: transparent; color: #6d5b39;");
+                textosRankingPuntaje[i]->setStyleSheet("background: transparent; color: #6d5b39;");
+            }
+
+
+            // BADGES
+            for (int i = 0; i < CANTIDAD_LOGROS; i++) {
+
+                imagenesBadges[i] = new QLabel(contenedorHighScores);
+
+                imagenesBadges[i]->setAlignment(Qt::AlignCenter);
+                imagenesBadges[i]->setScaledContents(true);
+                imagenesBadges[i]->setStyleSheet("background: transparent;");
+            }
+
+
+            // HOME
+            botonHomeHighScores = crearBotonImagen(obtenerRutaBoton("home"));
+            botonHomeHighScores->setParent(contenedorHighScores);
+
+            connect(botonHomeHighScores, &QPushButton::clicked, this, [this]() {
+                mostrarMenuPrincipal();
+            });
+
+
+            paginas->addWidget(paginaHighScores);
+        }
 
         // CREAR BOTON DE TEXTO
         QPushButton* crearBotonTexto(const QString &texto) {
@@ -781,15 +1139,342 @@ class MenusUI : public QWidget {
         }
 
         void mostrarMiPerfil() {
-            // Se implementara con el layout MY PROFILE.
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            string avatarActual = usuarioActual->obtenerAvatar();
+
+            avatarPerfilSeleccionado = 1;
+
+            for (int i = 1; i <= 10; i++) {
+
+                string nombreAvatar = "avatar_" + to_string(i) + ".png";
+
+                if (avatarActual == nombreAvatar) {
+                    avatarPerfilSeleccionado = i;
+                    break;
+                }
+            }
+
+            textoUsernamePerfil->setText(QString::fromStdString(usuarioActual->obtenerNombreUsuario()));
+
+            actualizarAvatarPerfil();
+
+            paginas->setCurrentWidget(paginaPerfil);
+
+            ajustarInterfaz();
+        }
+
+        void actualizarAvatarPerfil() {
+
+            string rutaAvatar = obtenerRutaAvatar(avatarPerfilSeleccionado);
+
+            QPixmap avatar(QString::fromStdString(rutaAvatar));
+
+            imagenAvatarPerfil->setPixmap(avatar);
+        }
+
+        void avatarAnteriorPerfil() {
+
+            avatarPerfilSeleccionado--;
+
+            if (avatarPerfilSeleccionado < 1) {
+                avatarPerfilSeleccionado = 10;
+            }
+
+            actualizarAvatarPerfil();
+        }
+
+        void avatarSiguientePerfil() {
+
+            avatarPerfilSeleccionado++;
+
+            if (avatarPerfilSeleccionado > 10) {
+                avatarPerfilSeleccionado = 1;
+            }
+
+            actualizarAvatarPerfil();
+        }
+
+        void guardarCambiosPerfil() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            string avatarAnterior = usuarioActual->obtenerAvatar();
+            string nuevoAvatar = "avatar_" + to_string(avatarPerfilSeleccionado) + ".png";
+
+            if (!avatarValido(nuevoAvatar)) {
+                return;
+            }
+
+            usuarioActual->establecerAvatar(nuevoAvatar);
+
+            if (!sistemaUsuarios.guardar()) {
+
+                usuarioActual->establecerAvatar(avatarAnterior);
+
+                QMessageBox::warning(
+                    this,
+                    "My Profile",
+                    "The avatar could not be saved."
+                );
+
+                return;
+            }
+
+            mostrarMenuPrincipal();
+        }
+
+        void cancelarCambiosPerfil() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            mostrarMenuPrincipal();
+        }
+
+        void mostrarCambioPassword() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            campoOldPassword->clear();
+            campoNewPassword->clear();
+
+            string rutaAvatar = obtenerRutaAvatar(usuarioActual->obtenerAvatar());
+            imagenAvatarCambioPassword->setPixmap(QPixmap(QString::fromStdString(rutaAvatar)));
+
+            paginas->setCurrentWidget(paginaCambioPassword);
+
+            campoOldPassword->setFocus();
+
+            ajustarInterfaz();
+        }
+
+        void cancelarCambioPassword() {
+
+            campoOldPassword->clear();
+            campoNewPassword->clear();
+
+            mostrarMiPerfil();
+        }
+
+        void guardarCambioPassword() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            string contrasenaAnterior = campoOldPassword->text().toStdString();
+            string contrasenaNueva = campoNewPassword->text().toStdString();
+
+
+            if (contrasenaAnterior.empty() || contrasenaNueva.empty()) {
+
+                QMessageBox::warning(
+                    this,
+                    "Change Password",
+                    "Old password and new password are required."
+                );
+
+                return;
+            }
+
+
+            string mensajeError;
+
+            if (!sistemaUsuarios.cambiarContrasenaUsuario(*usuarioActual, contrasenaAnterior, contrasenaNueva, mensajeError)) {
+
+                QMessageBox::warning(
+                    this,
+                    "Change Password",
+                    QString::fromStdString(mensajeError)
+                );
+
+                campoNewPassword->clear();
+
+                return;
+            }
+
+
+            QMessageBox::information(
+                this,
+                "Change Password",
+                "Password changed successfully."
+            );
+
+
+            campoOldPassword->clear();
+            campoNewPassword->clear();
+
+            mostrarMiPerfil();
         }
 
         void mostrarComoJugar() {
-            // Se implementara con los layouts HOW TO PLAY.
+
+            paginaComoJugarActual = 1;
+
+            actualizarComoJugar();
+
+            paginas->setCurrentWidget(paginaComoJugar);
+
+            ajustarInterfaz();
+        }
+
+        void avanzarComoJugar() {
+
+            if (paginaComoJugarActual < 3) {
+                paginaComoJugarActual++;
+            }
+
+            actualizarComoJugar();
+        }
+
+
+        void retrocederComoJugar() {
+
+            if (paginaComoJugarActual > 1) {
+                paginaComoJugarActual--;
+            }
+
+            actualizarComoJugar();
+        }
+
+        void actualizarComoJugar() {
+
+            switch (paginaComoJugarActual) {
+
+                case 1: {
+                    fondoComoJugar->setPixmap(QPixmap(QString::fromStdString(TEMPLATE_HOW_TO_PLAY_1)));
+
+                    botonAtrasComoJugar->hide();
+                    botonHomeComoJugar->hide();
+                    botonAdelanteComoJugar->show();
+
+                    break;
+                }
+
+                case 2: {
+                    fondoComoJugar->setPixmap(QPixmap(QString::fromStdString(TEMPLATE_HOW_TO_PLAY_2)));
+
+                    botonAtrasComoJugar->show();
+                    botonHomeComoJugar->hide();
+                    botonAdelanteComoJugar->show();
+
+                    break;
+                }
+
+                case 3: {
+                    fondoComoJugar->setPixmap(QPixmap(QString::fromStdString(TEMPLATE_HOW_TO_PLAY_3)));
+
+                    botonAtrasComoJugar->show();
+                    botonHomeComoJugar->show();
+                    botonAdelanteComoJugar->hide();
+
+                    break;
+                }
+            }
         }
 
         void mostrarHighScores() {
-            // Se implementara con el layout HIGH SCORES.
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            actualizarHighScores();
+
+            paginas->setCurrentWidget(paginaHighScores);
+
+            ajustarInterfaz();
+        }
+
+        void actualizarHighScores() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+
+            // -------------------------------------------------------------------------
+            // SCORE DEL USUARIO ACTUAL
+            // -------------------------------------------------------------------------
+
+            textoMiScore->setText(
+                QString("%1").arg(
+                    usuarioActual->obtenerPuntajeTotal(),
+                    5,
+                    10,
+                    QChar('0')
+                )
+            );
+
+
+            // -------------------------------------------------------------------------
+            // RANKING TOP 5
+            // -------------------------------------------------------------------------
+
+            Usuario* ranking[CANTIDAD_RANKING];
+
+            int cantidadRanking = sistemaUsuarios.obtenerRanking(ranking);
+
+
+            for (int i = 0; i < CANTIDAD_RANKING; i++) {
+
+                if (i < cantidadRanking && ranking[i] != nullptr) {
+
+                    textosRankingUsuario[i]->setText(
+                        QString::fromStdString(ranking[i]->obtenerNombreUsuario())
+                    );
+
+                    textosRankingPuntaje[i]->setText(
+                        QString::number(ranking[i]->obtenerPuntajeTotal())
+                    );
+
+                    textosRankingUsuario[i]->show();
+                    textosRankingPuntaje[i]->show();
+
+                } else {
+
+                    textosRankingUsuario[i]->clear();
+                    textosRankingPuntaje[i]->clear();
+
+                    textosRankingUsuario[i]->hide();
+                    textosRankingPuntaje[i]->hide();
+                }
+            }
+
+
+            // -------------------------------------------------------------------------
+            // BADGES
+            // -------------------------------------------------------------------------
+
+            for (int i = 0; i < CANTIDAD_LOGROS; i++) {
+
+                TipoLogro logro = static_cast<TipoLogro>(i);
+
+                if (usuarioActual->tieneLogro(logro)) {
+
+                    string rutaBadge = obtenerRutaBadge(logro);
+
+                    imagenesBadges[i]->setPixmap(
+                        QPixmap(QString::fromStdString(rutaBadge))
+                    );
+
+                    imagenesBadges[i]->show();
+
+                } else {
+
+                    imagenesBadges[i]->clear();
+                    imagenesBadges[i]->hide();
+                }
+            }
         }
 
         void mostrarModoMapa() {
@@ -1606,6 +2291,500 @@ class MenusUI : public QWidget {
                 textoHuevoPascua->raise();
                 botonClaimReward->raise();
                 botonHomeHuevoPascua->raise();
+            }
+
+            // PAGINA HOW TO PLAY
+            if (paginaComoJugar != nullptr && contenedorComoJugar != nullptr) {
+
+                double escalaComoJugarX = static_cast<double>(paginaComoJugar->width()) / ANCHO_DISENO_MENU;
+                double escalaComoJugarY = static_cast<double>(paginaComoJugar->height()) / ALTO_DISENO_MENU;
+
+                double escalaComoJugar = qMin(escalaComoJugarX, escalaComoJugarY);
+
+
+                // CONTENEDOR
+                contenedorComoJugar->setGeometry(0, 0, paginaComoJugar->width(), paginaComoJugar->height());
+
+
+                // TEMPLATE
+                fondoComoJugar->setGeometry(0, 0, contenedorComoJugar->width(), contenedorComoJugar->height());
+
+
+                // BACK - LADO IZQUIERDO
+                botonAtrasComoJugar->setGeometry(
+                    static_cast<int>(20 * escalaComoJugarX),
+                    static_cast<int>(480 * escalaComoJugarY),
+                    static_cast<int>(145 * escalaComoJugarX),
+                    static_cast<int>(145 * escalaComoJugarY)
+                );
+
+                botonAtrasComoJugar->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaComoJugar),
+                        static_cast<int>(135 * escalaComoJugar)
+                    )
+                );
+
+
+                // FORWARD - LADO DERECHO
+                botonAdelanteComoJugar->setGeometry(
+                    static_cast<int>(1915 * escalaComoJugarX),
+                    static_cast<int>(480 * escalaComoJugarY),
+                    static_cast<int>(145 * escalaComoJugarX),
+                    static_cast<int>(145 * escalaComoJugarY)
+                );
+
+                botonAdelanteComoJugar->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaComoJugar),
+                        static_cast<int>(135 * escalaComoJugar)
+                    )
+                );
+
+
+                // HOME - LADO DERECHO EN LA ULTIMA PAGINA
+                botonHomeComoJugar->setGeometry(
+                    static_cast<int>(1915 * escalaComoJugarX),
+                    static_cast<int>(480 * escalaComoJugarY),
+                    static_cast<int>(145 * escalaComoJugarX),
+                    static_cast<int>(145 * escalaComoJugarY)
+                );
+
+                botonHomeComoJugar->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaComoJugar),
+                        static_cast<int>(135 * escalaComoJugar)
+                    )
+                );
+
+
+                fondoComoJugar->lower();
+
+                botonAtrasComoJugar->raise();
+                botonAdelanteComoJugar->raise();
+                botonHomeComoJugar->raise();
+            }
+
+            // PAGINA MY PROFILE
+            if (paginaPerfil != nullptr && contenedorPerfil != nullptr) {
+
+                double escalaPerfilX = static_cast<double>(paginaPerfil->width()) / ANCHO_DISENO_MENU;
+                double escalaPerfilY = static_cast<double>(paginaPerfil->height()) / ALTO_DISENO_MENU;
+
+                double escalaPerfil = qMin(escalaPerfilX, escalaPerfilY);
+
+
+                // CONTENEDOR
+                contenedorPerfil->setGeometry(0, 0, paginaPerfil->width(), paginaPerfil->height());
+
+
+                // TEMPLATE
+                fondoPerfil->setGeometry(0, 0, contenedorPerfil->width(), contenedorPerfil->height());
+
+
+                // AVATAR
+                imagenAvatarPerfil->setGeometry(
+                    static_cast<int>(875 * escalaPerfilX),
+                    static_cast<int>(145 * escalaPerfilY),
+                    static_cast<int>(330 * escalaPerfilX),
+                    static_cast<int>(330 * escalaPerfilY)
+                );
+
+
+                // BACK AVATAR
+                botonAvatarAnterior->setGeometry(
+                    static_cast<int>(620 * escalaPerfilX),
+                    static_cast<int>(255 * escalaPerfilY),
+                    static_cast<int>(150 * escalaPerfilX),
+                    static_cast<int>(150 * escalaPerfilY)
+                );
+
+                botonAvatarAnterior->setIconSize(
+                    QSize(
+                        static_cast<int>(140 * escalaPerfil),
+                        static_cast<int>(140 * escalaPerfil)
+                    )
+                );
+
+
+                // FORWARD AVATAR
+                botonAvatarSiguiente->setGeometry(
+                    static_cast<int>(1310 * escalaPerfilX),
+                    static_cast<int>(255 * escalaPerfilY),
+                    static_cast<int>(150 * escalaPerfilX),
+                    static_cast<int>(150 * escalaPerfilY)
+                );
+
+                botonAvatarSiguiente->setIconSize(
+                    QSize(
+                        static_cast<int>(140 * escalaPerfil),
+                        static_cast<int>(140 * escalaPerfil)
+                    )
+                );
+
+
+                // USERNAME
+                textoUsernamePerfil->setGeometry(
+                    static_cast<int>(690 * escalaPerfilX),
+                    static_cast<int>(525 * escalaPerfilY),
+                    static_cast<int>(700 * escalaPerfilX),
+                    static_cast<int>(90 * escalaPerfilY)
+                );
+
+                QFont fuentePerfil;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuentePerfil.setFamily(nombreFuenteAlice);
+                }
+
+                fuentePerfil.setBold(true);
+                fuentePerfil.setPixelSize(static_cast<int>(48 * escalaPerfil));
+
+                textoUsernamePerfil->setFont(fuentePerfil);
+
+
+                // CHANGE PASSWORD
+                botonCambiarPassword->setGeometry(
+                    static_cast<int>(650 * escalaPerfilX),
+                    static_cast<int>(700 * escalaPerfilY),
+                    static_cast<int>(780 * escalaPerfilX),
+                    static_cast<int>(90 * escalaPerfilY)
+                );
+
+                botonCambiarPassword->setFont(fuentePerfil);
+
+
+                // CANCEL
+                botonCancelarPerfil->setGeometry(
+                    static_cast<int>(935 * escalaPerfilX),
+                    static_cast<int>(825 * escalaPerfilY),
+                    static_cast<int>(115 * escalaPerfilX),
+                    static_cast<int>(115 * escalaPerfilY)
+                );
+
+                botonCancelarPerfil->setIconSize(
+                    QSize(
+                        static_cast<int>(105 * escalaPerfil),
+                        static_cast<int>(105 * escalaPerfil)
+                    )
+                );
+
+
+                // ACCEPT
+                botonAceptarPerfil->setGeometry(
+                    static_cast<int>(1060 * escalaPerfilX),
+                    static_cast<int>(825 * escalaPerfilY),
+                    static_cast<int>(115 * escalaPerfilX),
+                    static_cast<int>(115 * escalaPerfilY)
+                );
+
+                botonAceptarPerfil->setIconSize(
+                    QSize(
+                        static_cast<int>(105 * escalaPerfil),
+                        static_cast<int>(105 * escalaPerfil)
+                    )
+                );
+
+                fondoPerfil->lower();
+
+                imagenAvatarPerfil->raise();
+                textoUsernamePerfil->raise();
+
+                botonAvatarAnterior->raise();
+                botonAvatarSiguiente->raise();
+
+                botonCambiarPassword->raise();
+
+                botonCancelarPerfil->raise();
+                botonAceptarPerfil->raise();
+            }
+
+            // PAGINA CHANGE PASSWORD
+            if (paginaCambioPassword != nullptr && contenedorCambioPassword != nullptr) {
+
+                double escalaPasswordX = static_cast<double>(paginaCambioPassword->width()) / ANCHO_DISENO_MENU;
+                double escalaPasswordY = static_cast<double>(paginaCambioPassword->height()) / ALTO_DISENO_MENU;
+
+                double escalaPassword = qMin(escalaPasswordX, escalaPasswordY);
+
+                // CONTENEDOR
+                contenedorCambioPassword->setGeometry(0, 0, paginaCambioPassword->width(), paginaCambioPassword->height());
+
+                // TEMPLATE
+                fondoCambioPassword->setGeometry(0, 0, contenedorCambioPassword->width(), contenedorCambioPassword->height());
+
+                // AVATAR
+                imagenAvatarCambioPassword->setGeometry(
+                    static_cast<int>(875 * escalaPasswordX),
+                    static_cast<int>(145 * escalaPasswordY),
+                    static_cast<int>(330 * escalaPasswordX),
+                    static_cast<int>(330 * escalaPasswordY)
+                );
+
+                // CANCEL
+                botonCancelarCambioPassword->setGeometry(
+                    static_cast<int>(935 * escalaPasswordX),
+                    static_cast<int>(510 * escalaPasswordY),
+                    static_cast<int>(115 * escalaPasswordX),
+                    static_cast<int>(115 * escalaPasswordY)
+                );
+
+                botonCancelarCambioPassword->setIconSize(
+                    QSize(
+                        static_cast<int>(105 * escalaPassword),
+                        static_cast<int>(105 * escalaPassword)
+                    )
+                );
+
+                // ACCEPT
+                botonAceptarCambioPassword->setGeometry(
+                    static_cast<int>(1060 * escalaPasswordX),
+                    static_cast<int>(510 * escalaPasswordY),
+                    static_cast<int>(115 * escalaPasswordX),
+                    static_cast<int>(115 * escalaPasswordY)
+                );
+
+                botonAceptarCambioPassword->setIconSize(
+                    QSize(
+                        static_cast<int>(105 * escalaPassword),
+                        static_cast<int>(105 * escalaPassword)
+                    )
+                );
+
+                QFont fuentePassword;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuentePassword.setFamily(nombreFuenteAlice);
+                }
+
+                fuentePassword.setPixelSize(static_cast<int>(38 * escalaPassword));
+
+                // OLD PASSWORD
+                textoOldPassword->setGeometry(
+                    static_cast<int>(650 * escalaPasswordX),
+                    static_cast<int>(665 * escalaPasswordY),
+                    static_cast<int>(780 * escalaPasswordX),
+                    static_cast<int>(55 * escalaPasswordY)
+                );
+
+                textoOldPassword->setFont(fuentePassword);
+
+                campoOldPassword->setGeometry(
+                    static_cast<int>(600 * escalaPasswordX),
+                    static_cast<int>(725 * escalaPasswordY),
+                    static_cast<int>(880 * escalaPasswordX),
+                    static_cast<int>(75 * escalaPasswordY)
+                );
+
+                campoOldPassword->setFont(fuentePassword);
+
+                // NEW PASSWORD
+                textoNewPassword->setGeometry(
+                    static_cast<int>(650 * escalaPasswordX),
+                    static_cast<int>(815 * escalaPasswordY),
+                    static_cast<int>(780 * escalaPasswordX),
+                    static_cast<int>(55 * escalaPasswordY)
+                );
+
+                textoNewPassword->setFont(fuentePassword);
+
+                campoNewPassword->setGeometry(
+                    static_cast<int>(600 * escalaPasswordX),
+                    static_cast<int>(875 * escalaPasswordY),
+                    static_cast<int>(880 * escalaPasswordX),
+                    static_cast<int>(75 * escalaPasswordY)
+                );
+
+                campoNewPassword->setFont(fuentePassword);
+
+                fondoCambioPassword->lower();
+
+                imagenAvatarCambioPassword->raise();
+
+                textoOldPassword->raise();
+                textoNewPassword->raise();
+
+                campoOldPassword->raise();
+                campoNewPassword->raise();
+
+                botonCancelarCambioPassword->raise();
+                botonAceptarCambioPassword->raise();
+            }
+
+            // PAGINA HIGH SCORES
+            if (paginaHighScores != nullptr && contenedorHighScores != nullptr) {
+
+                double escalaScoresX = static_cast<double>(paginaHighScores->width()) / ANCHO_DISENO_MENU;
+                double escalaScoresY = static_cast<double>(paginaHighScores->height()) / ALTO_DISENO_MENU;
+
+                double escalaScores = qMin(escalaScoresX, escalaScoresY);
+
+                // CONTENEDOR
+                contenedorHighScores->setGeometry(0, 0, paginaHighScores->width(), paginaHighScores->height());
+
+                // TEMPLATE
+                fondoHighScores->setGeometry(0, 0, contenedorHighScores->width(), contenedorHighScores->height());
+
+                // BOMB SQUAD
+                imagenRanking->setGeometry(
+                    static_cast<int>(145 * escalaScoresX),
+                    static_cast<int>(55 * escalaScoresY),
+                    static_cast<int>(1000 * escalaScoresX),
+                    static_cast<int>(895 * escalaScoresY)
+                );
+
+                // TITULO MY SCORE
+                textoTituloMiScore->setGeometry(
+                    static_cast<int>(1380 * escalaScoresX),
+                    static_cast<int>(100 * escalaScoresY),
+                    static_cast<int>(430 * escalaScoresX),
+                    static_cast<int>(70 * escalaScoresY)
+                );
+
+                // SCORE ACTUAL
+                textoMiScore->setGeometry(
+                    static_cast<int>(1360 * escalaScoresX),
+                    static_cast<int>(195 * escalaScoresY),
+                    static_cast<int>(470 * escalaScoresX),
+                    static_cast<int>(110 * escalaScoresY)
+                );
+
+                // MY MAYHEM MEDALS
+                textoTituloMedallas->setGeometry(
+                    static_cast<int>(1330 * escalaScoresX),
+                    static_cast<int>(340 * escalaScoresY),
+                    static_cast<int>(550 * escalaScoresX),
+                    static_cast<int>(70 * escalaScoresY)
+                );
+
+                QFont fuenteTituloScores;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteTituloScores.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteTituloScores.setBold(true);
+                fuenteTituloScores.setPixelSize(static_cast<int>(38 * escalaScores));
+
+                textoTituloMiScore->setFont(fuenteTituloScores);
+                textoTituloMedallas->setFont(fuenteTituloScores);
+
+                QFont fuenteMiScore;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteMiScore.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteMiScore.setBold(true);
+                fuenteMiScore.setPixelSize(static_cast<int>(72 * escalaScores));
+
+                textoMiScore->setFont(fuenteMiScore);
+
+                // -------------------------------------------------------------------------
+                // TOP 5 - POSICIONES ALINEADAS CON BOMB-SQUAD.PNG
+                // -------------------------------------------------------------------------
+
+                int posicionesYRanking[CANTIDAD_RANKING] = {
+                    472,
+                    570,
+                    668,
+                    766,
+                    864
+                };
+
+                QFont fuenteRanking;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteRanking.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteRanking.setPixelSize(static_cast<int>(34 * escalaScores));
+
+                for (int i = 0; i < CANTIDAD_RANKING; i++) {
+
+                    textosRankingUsuario[i]->setGeometry(
+                        static_cast<int>(565 * escalaScoresX),
+                        static_cast<int>((posicionesYRanking[i] - 32) * escalaScoresY),
+                        static_cast<int>(280 * escalaScoresX),
+                        static_cast<int>(64 * escalaScoresY)
+                    );
+
+                    textosRankingPuntaje[i]->setGeometry(
+                        static_cast<int>(845 * escalaScoresX),
+                        static_cast<int>((posicionesYRanking[i] - 32) * escalaScoresY),
+                        static_cast<int>(180 * escalaScoresX),
+                        static_cast<int>(64 * escalaScoresY)
+                    );
+
+                    textosRankingUsuario[i]->setFont(fuenteRanking);
+                    textosRankingPuntaje[i]->setFont(fuenteRanking);
+                }
+
+                // -------------------------------------------------------------------------
+                // BADGES
+                // -------------------------------------------------------------------------
+
+                int badgeX[CANTIDAD_LOGROS] = {
+                    1320,
+                    1500,
+                    1680,
+                    1320,
+                    1500,
+                    1680
+                };
+
+                int badgeY[CANTIDAD_LOGROS] = {
+                    430,
+                    430,
+                    430,
+                    620,
+                    620,
+                    620
+                };
+
+                for (int i = 0; i < CANTIDAD_LOGROS; i++) {
+
+                    imagenesBadges[i]->setGeometry(
+                        static_cast<int>(badgeX[i] * escalaScoresX),
+                        static_cast<int>(badgeY[i] * escalaScoresY),
+                        static_cast<int>(150 * escalaScoresX),
+                        static_cast<int>(150 * escalaScoresY)
+                    );
+                }
+
+                // HOME
+                botonHomeHighScores->setGeometry(
+                    static_cast<int>(1515 * escalaScoresX),
+                    static_cast<int>(855 * escalaScoresY),
+                    static_cast<int>(145 * escalaScoresX),
+                    static_cast<int>(145 * escalaScoresY)
+                );
+
+                botonHomeHighScores->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaScores),
+                        static_cast<int>(135 * escalaScores)
+                    )
+                );
+
+                fondoHighScores->lower();
+
+                imagenRanking->raise();
+
+                textoTituloMiScore->raise();
+                textoMiScore->raise();
+                textoTituloMedallas->raise();
+
+                for (int i = 0; i < CANTIDAD_RANKING; i++) {
+                    textosRankingUsuario[i]->raise();
+                    textosRankingPuntaje[i]->raise();
+                }
+
+                for (int i = 0; i < CANTIDAD_LOGROS; i++) {
+                    imagenesBadges[i]->raise();
+                }
+
+                botonHomeHighScores->raise();
             }
 
         }

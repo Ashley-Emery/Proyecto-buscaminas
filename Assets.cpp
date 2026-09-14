@@ -137,6 +137,18 @@ string obtenerRutaBadge(TipoLogro logro) {
     return "";
 }
 
+// -----------------------------------------------------------------------------
+// RANKING
+// -----------------------------------------------------------------------------
+
+string obtenerRutaRanking(const string &elemento) {
+
+    if (elemento == "bomb-squad") {
+        return RANKING_BOMB_SQUAD;
+    }
+
+    return "";
+}
 
 // -----------------------------------------------------------------------------
 // BOTONES DE ACCION

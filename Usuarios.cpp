@@ -319,6 +319,28 @@ bool SistemaUsuarios::registrarUsuario( const string &nombreUsuario, const strin
     return true;
 }
 
+bool SistemaUsuarios::cambiarContrasenaUsuario(Usuario &usuario, const string &contrasenaAnterior, const string &contrasenaNueva, string &mensajeError) {
+
+    string contrasenaOriginal = usuario.contrasena;
+
+    if (!usuario.cambiarContrasena(contrasenaAnterior, contrasenaNueva, mensajeError)) {
+        return false;
+    }
+
+    if (!guardar()) {
+
+        usuario.contrasena = contrasenaOriginal;
+
+        mensajeError = "No fue posible guardar la nueva contrasena en disco.";
+
+        return false;
+    }
+
+    mensajeError.clear();
+
+    return true;
+}
+
 Usuario* SistemaUsuarios::iniciarSesion( const string &nombreUsuario, const string &contrasena) const {
 
     Usuario* usuario = buscarUsuario(nombreUsuario);
