@@ -6,13 +6,10 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QIcon>
-
 #include <QLineEdit>
 #include <QMessageBox>
-
 #include <QMediaPlayer>
 #include <QVideoWidget>
-
 #include <QTimer>
 #include <QPixmap>
 #include <QFont>
@@ -21,13 +18,14 @@
 #include <QUrl>
 #include <QResizeEvent>
 #include <QApplication>
-
 #include <QImage>
+#include <QComboBox>
 
 using namespace std;
 
 QWidget* crearJuegoUI(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo, int numeroNivel);
 QWidget* crearJuegoUICargado(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo);
+QWidget* crearJuegoUIPersonalizado(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, int filas, int columnas);
 
 
 // CONSTANTES VISUALES
@@ -66,6 +64,7 @@ class MenusUI : public QWidget {
         QWidget* paginaRewards;
         QWidget* paginaBadgesInfo;
         QWidget* paginaPartidaGuardada;
+        QWidget* paginaCustomMayhem;
 
         // INTRO
         QVideoWidget* videoIntro;
@@ -203,6 +202,17 @@ class MenusUI : public QWidget {
         QPushButton* botonHomePartidaGuardada;
         QPushButton* botonLoadQuest;
         QPushButton* botonResetQuest;
+
+        // CUSTOM MAYHEM
+        QWidget* contenedorCustomMayhem;
+        QLabel* fondoCustomMayhem;
+        QLabel* textoCustomMayhem;
+        QLabel* textoInstruccionCustomMayhem;
+        QLabel* textoXCustomMayhem;
+        QComboBox* comboFilasCustomMayhem;
+        QComboBox* comboColumnasCustomMayhem;
+        QPushButton* botonBackCustomMayhem;
+        QPushButton* botonPlayGameCustomMayhem;
 
     public:
 
@@ -371,6 +381,7 @@ class MenusUI : public QWidget {
             crearPaginaRewards();
             crearPaginaBadgesInfo();
             crearPaginaPartidaGuardada();
+            crearPaginaCustomMayhem();
 
             if (!sistemaUsuarios.cargar()) {
 
@@ -1236,6 +1247,130 @@ class MenusUI : public QWidget {
             paginas->addWidget(paginaPartidaGuardada);
         }
 
+        // PAGINA CUSTOM MAYHEM
+        void crearPaginaCustomMayhem() {
+
+            paginaCustomMayhem = new QWidget();
+            contenedorCustomMayhem = new QWidget(paginaCustomMayhem);
+
+            // FONDO
+            fondoCustomMayhem = new QLabel(contenedorCustomMayhem);
+            fondoCustomMayhem->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_FELIX));
+            fondoCustomMayhem->setPixmap(imagenFondo);
+
+            // TEXTO FELIX
+            textoCustomMayhem = new QLabel(
+                "“Make it your own, kid! Pick the board size and set the challenge!”",
+                contenedorCustomMayhem
+            );
+
+            textoCustomMayhem->setAlignment(Qt::AlignCenter);
+            textoCustomMayhem->setStyleSheet(
+                "QLabel {"
+                "background: transparent;"
+                "color: black;"
+                "}"
+            );
+
+            // INSTRUCCION
+            textoInstruccionCustomMayhem = new QLabel(
+                "Pick anywhere from 8 to 40 columns and 8 to 12 rows.",
+                contenedorCustomMayhem
+            );
+
+            textoInstruccionCustomMayhem->setAlignment(Qt::AlignCenter);
+            textoInstruccionCustomMayhem->setStyleSheet(
+                "QLabel {"
+                "background: transparent;"
+                "color: black;"
+                "}"
+            );
+
+            // X ENTRE FILAS Y COLUMNAS
+            textoXCustomMayhem = new QLabel("x", contenedorCustomMayhem);
+            textoXCustomMayhem->setAlignment(Qt::AlignCenter);
+            textoXCustomMayhem->setStyleSheet(
+                "QLabel {"
+                "background: transparent;"
+                "color: black;"
+                "}"
+            );
+
+            // DROPDOWN FILAS
+            comboFilasCustomMayhem = new QComboBox(contenedorCustomMayhem);
+
+            for (int fila = FILAS_MINIMAS; fila <= FILAS_MAXIMAS; fila++) {
+                comboFilasCustomMayhem->addItem(QString::number(fila));
+            }
+
+            comboFilasCustomMayhem->setCurrentText("8");
+            comboFilasCustomMayhem->setCursor(Qt::PointingHandCursor);
+            comboFilasCustomMayhem->setFocusPolicy(Qt::NoFocus);
+
+            // DROPDOWN COLUMNAS
+            comboColumnasCustomMayhem = new QComboBox(contenedorCustomMayhem);
+
+            for (int columna = COLUMNAS_MINIMAS; columna <= COLUMNAS_MAXIMAS; columna++) {
+                comboColumnasCustomMayhem->addItem(QString::number(columna));
+            }
+
+            comboColumnasCustomMayhem->setCurrentText("20");
+            comboColumnasCustomMayhem->setCursor(Qt::PointingHandCursor);
+            comboColumnasCustomMayhem->setFocusPolicy(Qt::NoFocus);
+
+            // ESTILO DE LOS DROPDOWNS
+            QString rutaDropdown = QString::fromStdString(BOTON_DROPDOWN);
+
+            QString estiloDropdown =
+                "QComboBox {"
+                "border: none;"
+                "background: transparent;"
+                "border-image: url(" + rutaDropdown + ") 0 0 0 0 stretch stretch;"
+                "color: black;"
+                "padding-left: 20px;"
+                "padding-right: 8px;"
+                "}"
+                "QComboBox::drop-down {"
+                "border: none;"
+                "background: transparent;"
+                "width: 45px;"
+                "}"
+                "QComboBox::down-arrow {"
+                "image: none;"
+                "}"
+                "QComboBox QAbstractItemView {"
+                "background-color: #fff5e6;"
+                "color: black;"
+                "border: 2px solid black;"
+                "selection-background-color: #de461b;"
+                "selection-color: white;"
+                "}";
+
+            comboFilasCustomMayhem->setStyleSheet(estiloDropdown);
+            comboColumnasCustomMayhem->setStyleSheet(estiloDropdown);
+
+            // BACK
+            botonBackCustomMayhem = crearBotonImagen(obtenerRutaBoton("back"));
+            botonBackCustomMayhem->setParent(contenedorCustomMayhem);
+
+            // PLAY GAME
+            botonPlayGameCustomMayhem = crearBotonTexto("PLAY GAME");
+            botonPlayGameCustomMayhem->setParent(contenedorCustomMayhem);
+
+            // ACCIONES
+            connect(botonBackCustomMayhem, &QPushButton::clicked, this, [this]() {
+                mostrarPlay();
+            });
+
+            connect(botonPlayGameCustomMayhem, &QPushButton::clicked, this, [this]() {
+                iniciarPartidaPersonalizada();
+            });
+
+            paginas->addWidget(paginaCustomMayhem);
+        }
+
         // CREAR BOTON DE TEXTO
         QPushButton* crearBotonTexto(const QString &texto) {
 
@@ -1619,8 +1754,68 @@ class MenusUI : public QWidget {
 
         void mostrarCustomMayhem() {
 
-            // Se implementara con el layout donde el usuario
-            // seleccionara filas y columnas del tablero personalizado.
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            comboFilasCustomMayhem->setCurrentText("8");
+            comboColumnasCustomMayhem->setCurrentText("20");
+
+            paginas->setCurrentWidget(paginaCustomMayhem);
+
+            ajustarInterfaz();
+        }
+
+        void iniciarPartidaPersonalizada() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            int filas = comboFilasCustomMayhem->currentText().toInt();
+            int columnas = comboColumnasCustomMayhem->currentText().toInt();
+
+            string mensajeError;
+
+            if (!validarConfiguracionPersonalizada(filas, columnas, mensajeError)) {
+
+                QMessageBox::warning(
+                    this,
+                    "Custom Mayhem",
+                    QString::fromStdString(mensajeError)
+                );
+
+                return;
+            }
+
+            QWidget* ventanaJuego = crearJuegoUIPersonalizado(
+                usuarioActual,
+                &sistemaUsuarios,
+                filas,
+                columnas
+            );
+
+            if (ventanaJuego == nullptr) {
+
+                QMessageBox::warning(
+                    this,
+                    "Custom Mayhem",
+                    "The custom game could not be created."
+                );
+
+                return;
+            }
+
+            ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
+
+            connect(ventanaJuego, &QObject::destroyed, this, [this]() {
+                show();
+                mostrarPlay();
+            });
+
+            ventanaJuego->show();
+
+            hide();
         }
 
         void mostrarMiPerfil() {
@@ -3644,6 +3839,165 @@ class MenusUI : public QWidget {
                 botonHomePartidaGuardada->raise();
                 botonLoadQuest->raise();
                 botonResetQuest->raise();
+            }
+
+            // PAGINA CUSTOM MAYHEM
+            if (paginaCustomMayhem != nullptr && contenedorCustomMayhem != nullptr) {
+
+                double escalaCustomX =
+                    static_cast<double>(paginaCustomMayhem->width()) / ANCHO_DISENO_MENU;
+
+                double escalaCustomY =
+                    static_cast<double>(paginaCustomMayhem->height()) / ALTO_DISENO_MENU;
+
+                double escalaCustom = qMin(escalaCustomX, escalaCustomY);
+
+                // CONTENEDOR
+                contenedorCustomMayhem->setGeometry(
+                    0,
+                    0,
+                    paginaCustomMayhem->width(),
+                    paginaCustomMayhem->height()
+                );
+
+                // FONDO
+                fondoCustomMayhem->setGeometry(
+                    0,
+                    0,
+                    contenedorCustomMayhem->width(),
+                    contenedorCustomMayhem->height()
+                );
+
+                // TEXTO FELIX
+                textoCustomMayhem->setGeometry(
+                    static_cast<int>(140 * escalaCustomX),
+                    static_cast<int>(490 * escalaCustomY),
+                    static_cast<int>(1800 * escalaCustomX),
+                    static_cast<int>(110 * escalaCustomY)
+                );
+
+                QFont fuenteTextoCustom;
+
+                if (!nombreFuenteLobster.isEmpty()) {
+                    fuenteTextoCustom.setFamily(nombreFuenteLobster);
+                }
+
+                fuenteTextoCustom.setPixelSize(
+                    static_cast<int>(55 * escalaCustom)
+                );
+
+                textoCustomMayhem->setFont(fuenteTextoCustom);
+
+                // INSTRUCCION
+                textoInstruccionCustomMayhem->setGeometry(
+                    static_cast<int>(520 * escalaCustomX),
+                    static_cast<int>(660 * escalaCustomY),
+                    static_cast<int>(1040 * escalaCustomX),
+                    static_cast<int>(65 * escalaCustomY)
+                );
+
+                QFont fuenteInstruccion;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteInstruccion.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteInstruccion.setBold(true);
+                fuenteInstruccion.setPixelSize(
+                    static_cast<int>(34 * escalaCustom)
+                );
+
+                textoInstruccionCustomMayhem->setFont(fuenteInstruccion);
+
+                // DROPDOWN FILAS
+                comboFilasCustomMayhem->setGeometry(
+                    static_cast<int>(815 * escalaCustomX),
+                    static_cast<int>(760 * escalaCustomY),
+                    static_cast<int>(170 * escalaCustomX),
+                    static_cast<int>(70 * escalaCustomY)
+                );
+
+                // X
+                textoXCustomMayhem->setGeometry(
+                    static_cast<int>(995 * escalaCustomX),
+                    static_cast<int>(760 * escalaCustomY),
+                    static_cast<int>(90 * escalaCustomX),
+                    static_cast<int>(70 * escalaCustomY)
+                );
+
+                // DROPDOWN COLUMNAS
+                comboColumnasCustomMayhem->setGeometry(
+                    static_cast<int>(1095 * escalaCustomX),
+                    static_cast<int>(760 * escalaCustomY),
+                    static_cast<int>(170 * escalaCustomX),
+                    static_cast<int>(70 * escalaCustomY)
+                );
+
+                QFont fuenteDropdown;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteDropdown.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteDropdown.setBold(true);
+                fuenteDropdown.setPixelSize(
+                    static_cast<int>(28 * escalaCustom)
+                );
+
+                comboFilasCustomMayhem->setFont(fuenteDropdown);
+                comboColumnasCustomMayhem->setFont(fuenteDropdown);
+
+                QFont fuenteX = fuenteDropdown;
+                fuenteX.setPixelSize(static_cast<int>(38 * escalaCustom));
+                textoXCustomMayhem->setFont(fuenteX);
+
+                // PLAY GAME
+                botonPlayGameCustomMayhem->setGeometry(
+                    static_cast<int>(765 * escalaCustomX),
+                    static_cast<int>(855 * escalaCustomY),
+                    static_cast<int>(550 * escalaCustomX),
+                    static_cast<int>(75 * escalaCustomY)
+                );
+
+                QFont fuentePlayCustom;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuentePlayCustom.setFamily(nombreFuenteAlice);
+                }
+
+                fuentePlayCustom.setBold(true);
+                fuentePlayCustom.setPixelSize(
+                    static_cast<int>(45 * escalaCustom)
+                );
+
+                botonPlayGameCustomMayhem->setFont(fuentePlayCustom);
+
+                // BACK
+                botonBackCustomMayhem->setGeometry(
+                    static_cast<int>(115 * escalaCustomX),
+                    static_cast<int>(115 * escalaCustomY),
+                    static_cast<int>(145 * escalaCustomX),
+                    static_cast<int>(145 * escalaCustomY)
+                );
+
+                botonBackCustomMayhem->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaCustom),
+                        static_cast<int>(135 * escalaCustom)
+                    )
+                );
+
+                fondoCustomMayhem->lower();
+
+                textoCustomMayhem->raise();
+                textoInstruccionCustomMayhem->raise();
+                textoXCustomMayhem->raise();
+
+                comboFilasCustomMayhem->raise();
+                comboColumnasCustomMayhem->raise();
+
+                botonBackCustomMayhem->raise();
+                botonPlayGameCustomMayhem->raise();
             }
 
         }

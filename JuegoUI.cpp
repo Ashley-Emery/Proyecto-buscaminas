@@ -270,6 +270,42 @@ class JuegoUI : public QWidget {
             return true;
         }
 
+        bool configurarPartidaPersonalizada(int filas, int columnas) {
+
+            ConfiguracionPartida nuevaConfiguracion =
+                ConfiguracionPartida::crearPersonalizada(filas, columnas);
+
+            if (!nuevaConfiguracion.esValida()) {
+                return false;
+            }
+
+            modoActual = ModoJuego::PERSONALIZADO;
+            numeroNivelActual = 0;
+
+            introBossIniciada = false;
+            introBossFinalizada = false;
+
+            configuracionActual = nuevaConfiguracion;
+
+            if (!partida.iniciar(configuracionActual)) {
+                return false;
+            }
+
+            resultadoProcesado = false;
+
+            filaBombaExplotada = -1;
+            columnaBombaExplotada = -1;
+
+            configurarFondo();
+            crearTableroGrafico();
+            actualizarTiempo();
+            configurarMusica();
+
+            reproducirIntroBoss();
+
+            return true;
+        }
+
     private:
 
         // CREAR INTERFAZ PRINCIPAL
@@ -555,8 +591,23 @@ class JuegoUI : public QWidget {
             introBossIniciada = true;
             introBossFinalizada = false;
 
-            BossNivel boss = obtenerBossNivel(numeroNivelActual);
-            string rutaVideo = obtenerRutaVideoBoss(boss);
+            string rutaVideo;
+
+            if (modoActual == ModoJuego::PERSONALIZADO) {
+
+                BossPersonalizado boss = obtenerBossPersonalizado(
+                    configuracionActual.obtenerFilas(),
+                    configuracionActual.obtenerColumnas()
+                );
+
+                rutaVideo = obtenerRutaVideoBoss(boss);
+
+            } else {
+
+                BossNivel boss = obtenerBossNivel(numeroNivelActual);
+
+                rutaVideo = obtenerRutaVideoBoss(boss);
+            }
 
             reproductorBoss->stop();
             reproductorBoss->setMedia(crearUrlArchivo(rutaVideo));
@@ -1259,6 +1310,29 @@ QWidget* crearJuegoUICargado(Usuario* usuarioActual, SistemaUsuarios* sistemaUsu
     );
 
     if (!juego->cargarPartidaGuardadaDesdeDisco()) {
+        delete juego;
+        return nullptr;
+    }
+
+    return juego;
+}
+
+QWidget* crearJuegoUIPersonalizado(
+    Usuario* usuarioActual,
+    SistemaUsuarios* sistemaUsuarios,
+    int filas,
+    int columnas
+) {
+
+    JuegoUI* juego = new JuegoUI(
+        usuarioActual,
+        sistemaUsuarios,
+        ModoJuego::PERSONALIZADO,
+        0,
+        false
+    );
+
+    if (!juego->configurarPartidaPersonalizada(filas, columnas)) {
         delete juego;
         return nullptr;
     }
