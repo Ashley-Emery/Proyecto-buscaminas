@@ -352,6 +352,10 @@ bool ArchivoPersistencia::cargarPartida(const string &nombreUsuario, ModoJuego m
     Dificultad dificultad = static_cast<Dificultad>(dificultadEntera);
     ModoJuego modoCargado = static_cast<ModoJuego>(modoEntero);
 
+    if (modoCargado != modo) {
+        return false;
+    }
+
     ConfiguracionPartida configuracion(filas, columnas, minas, tiempoLimite, numeroNivel, dificultad, modoCargado);
 
     if (!partida.iniciar(configuracion)) {

@@ -27,6 +27,7 @@
 using namespace std;
 
 QWidget* crearJuegoUI(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo, int numeroNivel);
+QWidget* crearJuegoUICargado(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo);
 
 
 // CONSTANTES VISUALES
@@ -64,6 +65,7 @@ class MenusUI : public QWidget {
         QWidget* paginaPlay;
         QWidget* paginaRewards;
         QWidget* paginaBadgesInfo;
+        QWidget* paginaPartidaGuardada;
 
         // INTRO
         QVideoWidget* videoIntro;
@@ -193,6 +195,15 @@ class MenusUI : public QWidget {
         QLabel* fondoBadgesInfo;
         QPushButton* botonBackBadgesInfo;
 
+        // PARTIDA GUARDADA
+        QWidget* contenedorPartidaGuardada;
+        QLabel* fondoPartidaGuardada;
+        QLabel* textoPartidaGuardada;
+        QPushButton* botonBackPartidaGuardada;
+        QPushButton* botonHomePartidaGuardada;
+        QPushButton* botonLoadQuest;
+        QPushButton* botonResetQuest;
+
     public:
 
         MenusUI(QWidget* parent = nullptr)
@@ -300,6 +311,14 @@ class MenusUI : public QWidget {
                 contenedorBadgesInfo(nullptr),
                 fondoBadgesInfo(nullptr),
                 botonBackBadgesInfo(nullptr),
+                paginaPartidaGuardada(nullptr),
+                contenedorPartidaGuardada(nullptr),
+                fondoPartidaGuardada(nullptr),
+                textoPartidaGuardada(nullptr),
+                botonBackPartidaGuardada(nullptr),
+                botonHomePartidaGuardada(nullptr),
+                botonLoadQuest(nullptr),
+                botonResetQuest(nullptr),
                 botonExit(nullptr) {
 
             for (int i = 0; i < CANTIDAD_NIVELES; i++) {
@@ -351,6 +370,7 @@ class MenusUI : public QWidget {
             crearPaginaPlay();
             crearPaginaRewards();
             crearPaginaBadgesInfo();
+            crearPaginaPartidaGuardada();
 
             if (!sistemaUsuarios.cargar()) {
 
@@ -1164,6 +1184,58 @@ class MenusUI : public QWidget {
             paginas->addWidget(paginaBadgesInfo);
         }
 
+        // PAGINA PARTIDA GUARDADA
+        void crearPaginaPartidaGuardada() {
+
+            paginaPartidaGuardada = new QWidget();
+            contenedorPartidaGuardada = new QWidget(paginaPartidaGuardada);
+
+            // FONDO
+            fondoPartidaGuardada = new QLabel(contenedorPartidaGuardada);
+            fondoPartidaGuardada->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_FELIX));
+            fondoPartidaGuardada->setPixmap(imagenFondo);
+
+            // TEXTO
+            textoPartidaGuardada = new QLabel("“Your quest, your call—carry on or start again!”", contenedorPartidaGuardada);
+            textoPartidaGuardada->setAlignment(Qt::AlignCenter);
+            textoPartidaGuardada->setStyleSheet("QLabel { background: transparent; color: black; }");
+
+            // BOTONES DE TEXTO
+            botonLoadQuest = crearBotonTexto("LOAD GAME");
+            botonResetQuest = crearBotonTexto("RESET QUEST");
+
+            botonLoadQuest->setParent(contenedorPartidaGuardada);
+            botonResetQuest->setParent(contenedorPartidaGuardada);
+
+            // BOTONES DE IMAGEN
+            botonBackPartidaGuardada = crearBotonImagen(obtenerRutaBoton("back"));
+            botonHomePartidaGuardada = crearBotonImagen(obtenerRutaBoton("home"));
+
+            botonBackPartidaGuardada->setParent(contenedorPartidaGuardada);
+            botonHomePartidaGuardada->setParent(contenedorPartidaGuardada);
+
+            // ACCIONES
+            connect(botonBackPartidaGuardada, &QPushButton::clicked, this, [this]() {
+                mostrarPlay();
+            });
+
+            connect(botonHomePartidaGuardada, &QPushButton::clicked, this, [this]() {
+                mostrarMenuPrincipal();
+            });
+
+            connect(botonLoadQuest, &QPushButton::clicked, this, [this]() {
+                cargarQuestGuardada();
+            });
+
+            connect(botonResetQuest, &QPushButton::clicked, this, [this]() {
+                resetearQuestGuardada();
+            });
+
+            paginas->addWidget(paginaPartidaGuardada);
+        }
+
         // CREAR BOTON DE TEXTO
         QPushButton* crearBotonTexto(const QString &texto) {
 
@@ -1422,9 +1494,72 @@ class MenusUI : public QWidget {
 
         void mostrarPartidaGuardada() {
 
-            // Se implementara con el layout para:
-            // CONTINUE SAVED GAME
-            // START OVER
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            if (!ArchivoPersistencia::existePartidaGuardada(usuarioActual->obtenerNombreUsuario(), ModoJuego::PROGRESIVO)) {
+                iniciarModoProgresivo();
+                return;
+            }
+
+            paginas->setCurrentWidget(paginaPartidaGuardada);
+
+            ajustarInterfaz();
+        }
+
+        void cargarQuestGuardada() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            QWidget* ventanaJuego = crearJuegoUICargado(
+                usuarioActual,
+                &sistemaUsuarios,
+                ModoJuego::PROGRESIVO
+            );
+
+            if (ventanaJuego == nullptr) {
+
+                QMessageBox::warning(
+                    this,
+                    "Load Quest",
+                    "The saved quest could not be loaded."
+                );
+
+                return;
+            }
+
+            ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
+            ventanaJuego->show();
+
+            hide();
+        }
+
+        void resetearQuestGuardada() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            string nombreUsuario = usuarioActual->obtenerNombreUsuario();
+
+            if (ArchivoPersistencia::existePartidaGuardada(nombreUsuario, ModoJuego::PROGRESIVO)) {
+
+                if (!ArchivoPersistencia::eliminarPartidaGuardada(nombreUsuario, ModoJuego::PROGRESIVO)) {
+
+                    QMessageBox::warning(
+                        this,
+                        "Reset Quest",
+                        "The saved quest could not be deleted."
+                    );
+
+                    return;
+                }
+            }
+
+            iniciarModoProgresivo();
         }
 
         void mostrarRewards() {
@@ -3409,6 +3544,106 @@ class MenusUI : public QWidget {
 
                 fondoBadgesInfo->lower();
                 botonBackBadgesInfo->raise();
+            }
+
+            // PAGINA PARTIDA GUARDADA
+            if (paginaPartidaGuardada != nullptr && contenedorPartidaGuardada != nullptr) {
+
+                double escalaGuardadaX = static_cast<double>(paginaPartidaGuardada->width()) / ANCHO_DISENO_MENU;
+                double escalaGuardadaY = static_cast<double>(paginaPartidaGuardada->height()) / ALTO_DISENO_MENU;
+
+                double escalaGuardada = qMin(escalaGuardadaX, escalaGuardadaY);
+
+                // CONTENEDOR
+                contenedorPartidaGuardada->setGeometry(0, 0, paginaPartidaGuardada->width(), paginaPartidaGuardada->height());
+
+                // FONDO
+                fondoPartidaGuardada->setGeometry(0, 0, contenedorPartidaGuardada->width(), contenedorPartidaGuardada->height());
+
+                // TEXTO
+                textoPartidaGuardada->setGeometry(
+                    static_cast<int>(400 * escalaGuardadaX),
+                    static_cast<int>(500 * escalaGuardadaY),
+                    static_cast<int>(1280 * escalaGuardadaX),
+                    static_cast<int>(105 * escalaGuardadaY)
+                );
+
+                QFont fuenteTextoGuardada;
+
+                if (!nombreFuenteLobster.isEmpty()) {
+                    fuenteTextoGuardada.setFamily(nombreFuenteLobster);
+                }
+
+                fuenteTextoGuardada.setPixelSize(static_cast<int>(55 * escalaGuardada));
+
+                textoPartidaGuardada->setFont(fuenteTextoGuardada);
+
+                // BACK
+                botonBackPartidaGuardada->setGeometry(
+                    static_cast<int>(145 * escalaGuardadaX),
+                    static_cast<int>(485 * escalaGuardadaY),
+                    static_cast<int>(145 * escalaGuardadaX),
+                    static_cast<int>(145 * escalaGuardadaY)
+                );
+
+                botonBackPartidaGuardada->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaGuardada),
+                        static_cast<int>(135 * escalaGuardada)
+                    )
+                );
+
+                // HOME
+                botonHomePartidaGuardada->setGeometry(
+                    static_cast<int>(1790 * escalaGuardadaX),
+                    static_cast<int>(485 * escalaGuardadaY),
+                    static_cast<int>(145 * escalaGuardadaX),
+                    static_cast<int>(145 * escalaGuardadaY)
+                );
+
+                botonHomePartidaGuardada->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaGuardada),
+                        static_cast<int>(135 * escalaGuardada)
+                    )
+                );
+
+                // LOAD QUEST
+                botonLoadQuest->setGeometry(
+                    static_cast<int>(720 * escalaGuardadaX),
+                    static_cast<int>(700 * escalaGuardadaY),
+                    static_cast<int>(640 * escalaGuardadaX),
+                    static_cast<int>(85 * escalaGuardadaY)
+                );
+
+                // RESET QUEST
+                botonResetQuest->setGeometry(
+                    static_cast<int>(680 * escalaGuardadaX),
+                    static_cast<int>(815 * escalaGuardadaY),
+                    static_cast<int>(720 * escalaGuardadaX),
+                    static_cast<int>(85 * escalaGuardadaY)
+                );
+
+                QFont fuenteBotonesGuardada;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteBotonesGuardada.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteBotonesGuardada.setBold(true);
+                fuenteBotonesGuardada.setPixelSize(static_cast<int>(46 * escalaGuardada));
+
+                botonLoadQuest->setFont(fuenteBotonesGuardada);
+                botonResetQuest->setFont(fuenteBotonesGuardada);
+
+                fondoPartidaGuardada->lower();
+
+                textoPartidaGuardada->raise();
+
+                botonBackPartidaGuardada->raise();
+                botonHomePartidaGuardada->raise();
+                botonLoadQuest->raise();
+                botonResetQuest->raise();
             }
 
         }

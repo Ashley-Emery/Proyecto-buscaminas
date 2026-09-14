@@ -165,7 +165,7 @@ class JuegoUI : public QWidget {
 
 
     public:
-        JuegoUI(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo, int numeroNivel, QWidget* parent = nullptr)
+        JuegoUI(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo, int numeroNivel, bool configurarAutomaticamente = true, QWidget* parent = nullptr)
             : QWidget(parent),
                 usuarioActual(usuarioActual),
                 sistemaUsuarios(sistemaUsuarios),
@@ -217,13 +217,58 @@ class JuegoUI : public QWidget {
             setMinimumSize(ANCHO_MINIMO_JUEGO, ALTO_MINIMO_JUEGO);
 
             crearInterfaz();
-            configurarNivel(modo, numeroNivel);
+
+            if (configurarAutomaticamente) {
+                configurarNivel(modo, numeroNivel);
+            }
         }
 
         ~JuegoUI() {
             liberarCeldasGraficas();
         }
 
+        bool cargarPartidaGuardadaDesdeDisco() {
+
+            if (usuarioActual == nullptr) {
+                return false;
+            }
+
+            string nombreUsuario = usuarioActual->obtenerNombreUsuario();
+
+            if (!ArchivoPersistencia::cargarPartida(nombreUsuario, modoActual, partida)) {
+                return false;
+            }
+
+            configuracionActual = partida.obtenerConfiguracion();
+
+            modoActual = configuracionActual.obtenerModo();
+            numeroNivelActual = configuracionActual.obtenerNumeroNivel();
+
+            resultadoProcesado = false;
+
+            filaBombaExplotada = -1;
+            columnaBombaExplotada = -1;
+
+            // La partida ya esta completamente cargada en memoria.
+            // Consumimos el save para evitar dejar una copia vieja en cola.
+            if (!ArchivoPersistencia::eliminarPartidaGuardada(nombreUsuario, modoActual)) {
+                return false;
+            }
+
+            configurarFondo();
+            crearTableroGrafico();
+            actualizarTiempo();
+            configurarMusica();
+
+            paginas->setCurrentWidget(paginaPartida);
+
+            reproductorBanner->play();
+            iniciarMusica();
+
+            timerPartida->start();
+
+            return true;
+        }
 
     private:
 
@@ -1199,6 +1244,24 @@ QWidget* crearJuegoUI(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, 
         modo,
         numeroNivel
     );
+
+    return juego;
+}
+
+QWidget* crearJuegoUICargado(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo) {
+
+    JuegoUI* juego = new JuegoUI(
+        usuarioActual,
+        sistemaUsuarios,
+        modo,
+        0,
+        false
+    );
+
+    if (!juego->cargarPartidaGuardadaDesdeDisco()) {
+        delete juego;
+        return nullptr;
+    }
 
     return juego;
 }
