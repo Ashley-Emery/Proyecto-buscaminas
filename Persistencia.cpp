@@ -3,9 +3,8 @@
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
-#include <filesystem>
 
-namespace fs = std::filesystem;
+#include <QDir>
 
 
 template <typename Tipo>
@@ -85,14 +84,8 @@ string obtenerNombreArchivoModo(ModoJuego modo) {
 }
 
 bool crearCarpeta(const string &ruta) {
-
-    try {
-        fs::create_directories(ruta);
-        return true;
-    }
-    catch (...) {
-        return false;
-    }
+    QDir directorio;
+    return directorio.mkpath(QString::fromStdString(ruta));
 }
 
 string construirRutaCarpetaUsuario(const string &nombreUsuario) {

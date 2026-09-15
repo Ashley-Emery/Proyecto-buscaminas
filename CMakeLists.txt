@@ -34,7 +34,3 @@ target_link_libraries(Proyecto-buscaminas PRIVATE
     Qt5::Multimedia
     Qt5::MultimediaWidgets
 )
-
-if(MINGW)
-    target_link_libraries(Proyecto-buscaminas PRIVATE stdc++fs)
-endif()
