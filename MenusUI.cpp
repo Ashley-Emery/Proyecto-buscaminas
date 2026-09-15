@@ -203,6 +203,24 @@ class MenusUI : public QWidget {
         QPushButton* botonLoadQuest;
         QPushButton* botonResetQuest;
 
+        // PARTIDA MAPA GUARDADA
+        QWidget* paginaMapaGuardada;
+        QWidget* contenedorMapaGuardada;
+        QLabel* fondoMapaGuardada;
+        QLabel* textoMapaGuardada;
+        QPushButton* botonBackMapaGuardada;
+        QPushButton* botonLoadMapaGuardada;
+        QPushButton* botonNewQuestMapa;
+
+        // PARTIDA PERSONALIZADA GUARDADA
+        QWidget* paginaPersonalizadaGuardada;
+        QWidget* contenedorPersonalizadaGuardada;
+        QLabel* fondoPersonalizadaGuardada;
+        QLabel* textoPersonalizadaGuardada;
+        QPushButton* botonBackPersonalizadaGuardada;
+        QPushButton* botonLoadPersonalizadaGuardada;
+        QPushButton* botonNewQuestPersonalizada;
+
         // CUSTOM MAYHEM
         QWidget* contenedorCustomMayhem;
         QLabel* fondoCustomMayhem;
@@ -329,6 +347,20 @@ class MenusUI : public QWidget {
                 botonHomePartidaGuardada(nullptr),
                 botonLoadQuest(nullptr),
                 botonResetQuest(nullptr),
+                paginaMapaGuardada(nullptr),
+                contenedorMapaGuardada(nullptr),
+                fondoMapaGuardada(nullptr),
+                textoMapaGuardada(nullptr),
+                botonBackMapaGuardada(nullptr),
+                botonLoadMapaGuardada(nullptr),
+                botonNewQuestMapa(nullptr),
+                paginaPersonalizadaGuardada(nullptr),
+                contenedorPersonalizadaGuardada(nullptr),
+                fondoPersonalizadaGuardada(nullptr),
+                textoPersonalizadaGuardada(nullptr),
+                botonBackPersonalizadaGuardada(nullptr),
+                botonLoadPersonalizadaGuardada(nullptr),
+                botonNewQuestPersonalizada(nullptr),
                 botonExit(nullptr) {
 
             for (int i = 0; i < CANTIDAD_NIVELES; i++) {
@@ -381,6 +413,8 @@ class MenusUI : public QWidget {
             crearPaginaRewards();
             crearPaginaBadgesInfo();
             crearPaginaPartidaGuardada();
+            crearPaginaMapaGuardada();
+            crearPaginaPersonalizadaGuardada();
             crearPaginaCustomMayhem();
 
             if (!sistemaUsuarios.cargar()) {
@@ -1247,6 +1281,140 @@ class MenusUI : public QWidget {
             paginas->addWidget(paginaPartidaGuardada);
         }
 
+        // PAGINA PARTIDA MAPA GUARDADA
+        void crearPaginaMapaGuardada() {
+
+            paginaMapaGuardada = new QWidget();
+            contenedorMapaGuardada = new QWidget(paginaMapaGuardada);
+
+            // FONDO
+            fondoMapaGuardada = new QLabel(contenedorMapaGuardada);
+            fondoMapaGuardada->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_FELIX));
+            fondoMapaGuardada->setPixmap(imagenFondo);
+
+            // TEXTO
+            textoMapaGuardada = new QLabel(
+                "“Your quest, your call—carry on or start again!”",
+                contenedorMapaGuardada
+            );
+
+            textoMapaGuardada->setAlignment(Qt::AlignCenter);
+
+            textoMapaGuardada->setStyleSheet(
+                "QLabel {"
+                "background: transparent;"
+                "color: black;"
+                "}"
+            );
+
+            // BOTON BACK
+            botonBackMapaGuardada = crearBotonImagen(obtenerRutaBoton("back"));
+            botonBackMapaGuardada->setParent(contenedorMapaGuardada);
+
+            // BOTONES DE TEXTO
+            botonLoadMapaGuardada = crearBotonTexto("LOAD GAME");
+            botonNewQuestMapa = crearBotonTexto("NEW QUEST");
+
+            botonLoadMapaGuardada->setParent(contenedorMapaGuardada);
+            botonNewQuestMapa->setParent(contenedorMapaGuardada);
+
+            // ACCIONES
+            connect(botonBackMapaGuardada, &QPushButton::clicked, this, [this]() {
+                mostrarMenuPrincipal();
+            });
+
+            connect(botonLoadMapaGuardada, &QPushButton::clicked, this, [this]() {
+                cargarMapaGuardado();
+            });
+
+            connect(botonNewQuestMapa, &QPushButton::clicked, this, [this]() {
+                mostrarMapaNuevo();
+            });
+
+            paginas->addWidget(paginaMapaGuardada);
+        }
+
+        // PAGINA PARTIDA PERSONALIZADA GUARDADA
+        void crearPaginaPersonalizadaGuardada() {
+
+            paginaPersonalizadaGuardada = new QWidget();
+            contenedorPersonalizadaGuardada = new QWidget(paginaPersonalizadaGuardada);
+
+            // FONDO
+            fondoPersonalizadaGuardada = new QLabel(contenedorPersonalizadaGuardada);
+            fondoPersonalizadaGuardada->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_FELIX));
+            fondoPersonalizadaGuardada->setPixmap(imagenFondo);
+
+            // TEXTO
+            textoPersonalizadaGuardada = new QLabel(
+                "“Your quest, your call—carry on or start again!”",
+                contenedorPersonalizadaGuardada
+            );
+
+            textoPersonalizadaGuardada->setAlignment(Qt::AlignCenter);
+
+            textoPersonalizadaGuardada->setStyleSheet(
+                "QLabel {"
+                "background: transparent;"
+                "color: black;"
+                "}"
+            );
+
+            // BOTON BACK
+            botonBackPersonalizadaGuardada =
+                crearBotonImagen(obtenerRutaBoton("back"));
+
+            botonBackPersonalizadaGuardada->setParent(
+                contenedorPersonalizadaGuardada
+            );
+
+            // BOTONES DE TEXTO
+            botonLoadPersonalizadaGuardada = crearBotonTexto("LOAD GAME");
+            botonNewQuestPersonalizada = crearBotonTexto("NEW QUEST");
+
+            botonLoadPersonalizadaGuardada->setParent(
+                contenedorPersonalizadaGuardada
+            );
+
+            botonNewQuestPersonalizada->setParent(
+                contenedorPersonalizadaGuardada
+            );
+
+            // ACCIONES
+            connect(
+                botonBackPersonalizadaGuardada,
+                &QPushButton::clicked,
+                this,
+                [this]() {
+                    mostrarPlay();
+                }
+            );
+
+            connect(
+                botonLoadPersonalizadaGuardada,
+                &QPushButton::clicked,
+                this,
+                [this]() {
+                    cargarPersonalizadaGuardada();
+                }
+            );
+
+            connect(
+                botonNewQuestPersonalizada,
+                &QPushButton::clicked,
+                this,
+                [this]() {
+                    mostrarCustomMayhemNuevo();
+                }
+            );
+
+            paginas->addWidget(paginaPersonalizadaGuardada);
+        }
+
         // PAGINA CUSTOM MAYHEM
         void crearPaginaCustomMayhem() {
 
@@ -1622,6 +1790,13 @@ class MenusUI : public QWidget {
             );
 
             ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
+            ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
+
+            connect(ventanaJuego, &QObject::destroyed, this, [this]() {
+                show();
+                mostrarMenuPrincipal();
+            });
+
             ventanaJuego->show();
 
             hide();
@@ -1667,6 +1842,13 @@ class MenusUI : public QWidget {
             }
 
             ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
+            ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
+
+            connect(ventanaJuego, &QObject::destroyed, this, [this]() {
+                show();
+                mostrarMenuPrincipal();
+            });
+
             ventanaJuego->show();
 
             hide();
@@ -1758,12 +1940,96 @@ class MenusUI : public QWidget {
                 return;
             }
 
+            bool tienePartidaGuardada =
+                ArchivoPersistencia::existePartidaGuardada(
+                    usuarioActual->obtenerNombreUsuario(),
+                    ModoJuego::PERSONALIZADO
+                );
+
+            if (tienePartidaGuardada) {
+
+                paginas->setCurrentWidget(paginaPersonalizadaGuardada);
+
+                ajustarInterfaz();
+
+                return;
+            }
+
+            mostrarCustomMayhemNuevo();
+        }
+
+        void mostrarCustomMayhemNuevo() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
             comboFilasCustomMayhem->setCurrentText("8");
             comboColumnasCustomMayhem->setCurrentText("20");
 
             paginas->setCurrentWidget(paginaCustomMayhem);
 
             ajustarInterfaz();
+        }
+
+        void cargarPersonalizadaGuardada() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            string nombreUsuario =
+                usuarioActual->obtenerNombreUsuario();
+
+            if (!ArchivoPersistencia::existePartidaGuardada(
+                    nombreUsuario,
+                    ModoJuego::PERSONALIZADO
+                )) {
+
+                mostrarCustomMayhemNuevo();
+
+                return;
+            }
+
+            QWidget* ventanaJuego = crearJuegoUICargado(
+                usuarioActual,
+                &sistemaUsuarios,
+                ModoJuego::PERSONALIZADO
+            );
+
+            if (ventanaJuego == nullptr) {
+
+                QMessageBox::warning(
+                    this,
+                    "Load Game",
+                    "The saved custom game could not be loaded."
+                );
+
+                return;
+            }
+
+            ventanaJuego->setAttribute(
+                Qt::WA_DeleteOnClose
+            );
+
+            ventanaJuego->setAttribute(
+                Qt::WA_QuitOnClose,
+                false
+            );
+
+            connect(
+                ventanaJuego,
+                &QObject::destroyed,
+                this,
+                [this]() {
+                    show();
+                    mostrarMenuPrincipal();
+                }
+            );
+
+            ventanaJuego->show();
+
+            hide();
         }
 
         void iniciarPartidaPersonalizada() {
@@ -1807,10 +2073,11 @@ class MenusUI : public QWidget {
             }
 
             ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
+            ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
 
             connect(ventanaJuego, &QObject::destroyed, this, [this]() {
                 show();
-                mostrarPlay();
+                mostrarMenuPrincipal();
             });
 
             ventanaJuego->show();
@@ -2163,11 +2430,78 @@ class MenusUI : public QWidget {
                 return;
             }
 
+            bool tienePartidaGuardada = ArchivoPersistencia::existePartidaGuardada(
+                usuarioActual->obtenerNombreUsuario(),
+                ModoJuego::MAPA
+            );
+
+            if (tienePartidaGuardada) {
+
+                paginas->setCurrentWidget(paginaMapaGuardada);
+
+                ajustarInterfaz();
+
+                return;
+            }
+
+            mostrarMapaNuevo();
+        }
+
+        void mostrarMapaNuevo() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
             paginas->setCurrentWidget(paginaMapa);
 
             ajustarInterfaz();
         }
 
+        void cargarMapaGuardado() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            string nombreUsuario = usuarioActual->obtenerNombreUsuario();
+
+            if (!ArchivoPersistencia::existePartidaGuardada(nombreUsuario, ModoJuego::MAPA)) {
+
+                mostrarMapaNuevo();
+
+                return;
+            }
+
+            QWidget* ventanaJuego = crearJuegoUICargado(
+                usuarioActual,
+                &sistemaUsuarios,
+                ModoJuego::MAPA
+            );
+
+            if (ventanaJuego == nullptr) {
+
+                QMessageBox::warning(
+                    this,
+                    "Load Game",
+                    "The saved map game could not be loaded."
+                );
+
+                return;
+            }
+
+            ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
+            ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
+
+            connect(ventanaJuego, &QObject::destroyed, this, [this]() {
+                show();
+                mostrarMenuPrincipal();
+            });
+
+            ventanaJuego->show();
+
+            hide();
+        }
 
         void iniciarNivelMapa(int numeroNivel) {
 
@@ -2187,6 +2521,7 @@ class MenusUI : public QWidget {
             );
 
             ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
+            ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
 
             connect(ventanaJuego, &QObject::destroyed, this, [this]() {
                 show();
@@ -3839,6 +4174,281 @@ class MenusUI : public QWidget {
                 botonHomePartidaGuardada->raise();
                 botonLoadQuest->raise();
                 botonResetQuest->raise();
+            }
+
+            // PAGINA PARTIDA MAPA GUARDADA
+            if (paginaMapaGuardada != nullptr && contenedorMapaGuardada != nullptr) {
+
+                double escalaMapaGuardadaX =
+                    static_cast<double>(paginaMapaGuardada->width()) /
+                    ANCHO_DISENO_MENU;
+
+                double escalaMapaGuardadaY =
+                    static_cast<double>(paginaMapaGuardada->height()) /
+                    ALTO_DISENO_MENU;
+
+                double escalaMapaGuardada =
+                    qMin(escalaMapaGuardadaX, escalaMapaGuardadaY);
+
+
+                // CONTENEDOR
+                contenedorMapaGuardada->setGeometry(
+                    0,
+                    0,
+                    paginaMapaGuardada->width(),
+                    paginaMapaGuardada->height()
+                );
+
+
+                // FONDO
+                fondoMapaGuardada->setGeometry(
+                    0,
+                    0,
+                    contenedorMapaGuardada->width(),
+                    contenedorMapaGuardada->height()
+                );
+
+
+                // TEXTO
+                textoMapaGuardada->setGeometry(
+                    static_cast<int>(400 * escalaMapaGuardadaX),
+                    static_cast<int>(500 * escalaMapaGuardadaY),
+                    static_cast<int>(1280 * escalaMapaGuardadaX),
+                    static_cast<int>(105 * escalaMapaGuardadaY)
+                );
+
+
+                QFont fuenteTextoMapaGuardada;
+
+                if (!nombreFuenteLobster.isEmpty()) {
+                    fuenteTextoMapaGuardada.setFamily(nombreFuenteLobster);
+                }
+
+                fuenteTextoMapaGuardada.setPixelSize(
+                    static_cast<int>(55 * escalaMapaGuardada)
+                );
+
+                textoMapaGuardada->setFont(fuenteTextoMapaGuardada);
+
+
+                // BACK
+                botonBackMapaGuardada->setGeometry(
+                    static_cast<int>(145 * escalaMapaGuardadaX),
+                    static_cast<int>(485 * escalaMapaGuardadaY),
+                    static_cast<int>(145 * escalaMapaGuardadaX),
+                    static_cast<int>(145 * escalaMapaGuardadaY)
+                );
+
+                botonBackMapaGuardada->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaMapaGuardada),
+                        static_cast<int>(135 * escalaMapaGuardada)
+                    )
+                );
+
+
+                // LOAD GAME
+                botonLoadMapaGuardada->setGeometry(
+                    static_cast<int>(720 * escalaMapaGuardadaX),
+                    static_cast<int>(700 * escalaMapaGuardadaY),
+                    static_cast<int>(640 * escalaMapaGuardadaX),
+                    static_cast<int>(85 * escalaMapaGuardadaY)
+                );
+
+
+                // NEW QUEST
+                botonNewQuestMapa->setGeometry(
+                    static_cast<int>(680 * escalaMapaGuardadaX),
+                    static_cast<int>(815 * escalaMapaGuardadaY),
+                    static_cast<int>(720 * escalaMapaGuardadaX),
+                    static_cast<int>(85 * escalaMapaGuardadaY)
+                );
+
+
+                QFont fuenteBotonesMapaGuardada;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteBotonesMapaGuardada.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteBotonesMapaGuardada.setBold(true);
+
+                fuenteBotonesMapaGuardada.setPixelSize(
+                    static_cast<int>(46 * escalaMapaGuardada)
+                );
+
+                botonLoadMapaGuardada->setFont(fuenteBotonesMapaGuardada);
+                botonNewQuestMapa->setFont(fuenteBotonesMapaGuardada);
+
+
+                fondoMapaGuardada->lower();
+
+                textoMapaGuardada->raise();
+
+                botonBackMapaGuardada->raise();
+                botonLoadMapaGuardada->raise();
+                botonNewQuestMapa->raise();
+            }
+
+            // PAGINA PARTIDA PERSONALIZADA GUARDADA
+            if (paginaPersonalizadaGuardada != nullptr && contenedorPersonalizadaGuardada != nullptr) {
+
+                double escalaPersonalizadaGuardadaX =
+                    static_cast<double>(
+                        paginaPersonalizadaGuardada->width()
+                    ) / ANCHO_DISENO_MENU;
+
+                double escalaPersonalizadaGuardadaY =
+                    static_cast<double>(
+                        paginaPersonalizadaGuardada->height()
+                    ) / ALTO_DISENO_MENU;
+
+                double escalaPersonalizadaGuardada =
+                    qMin(
+                        escalaPersonalizadaGuardadaX,
+                        escalaPersonalizadaGuardadaY
+                    );
+
+                // CONTENEDOR
+                contenedorPersonalizadaGuardada->setGeometry(
+                    0,
+                    0,
+                    paginaPersonalizadaGuardada->width(),
+                    paginaPersonalizadaGuardada->height()
+                );
+
+                // FONDO
+                fondoPersonalizadaGuardada->setGeometry(
+                    0,
+                    0,
+                    contenedorPersonalizadaGuardada->width(),
+                    contenedorPersonalizadaGuardada->height()
+                );
+
+                // TEXTO
+                textoPersonalizadaGuardada->setGeometry(
+                    static_cast<int>(
+                        400 * escalaPersonalizadaGuardadaX
+                    ),
+                    static_cast<int>(
+                        500 * escalaPersonalizadaGuardadaY
+                    ),
+                    static_cast<int>(
+                        1280 * escalaPersonalizadaGuardadaX
+                    ),
+                    static_cast<int>(
+                        105 * escalaPersonalizadaGuardadaY
+                    )
+                );
+
+                QFont fuenteTextoPersonalizadaGuardada;
+
+                if (!nombreFuenteLobster.isEmpty()) {
+                    fuenteTextoPersonalizadaGuardada.setFamily(
+                        nombreFuenteLobster
+                    );
+                }
+
+                fuenteTextoPersonalizadaGuardada.setPixelSize(
+                    static_cast<int>(
+                        55 * escalaPersonalizadaGuardada
+                    )
+                );
+
+                textoPersonalizadaGuardada->setFont(
+                    fuenteTextoPersonalizadaGuardada
+                );
+
+                // BACK
+                botonBackPersonalizadaGuardada->setGeometry(
+                    static_cast<int>(
+                        145 * escalaPersonalizadaGuardadaX
+                    ),
+                    static_cast<int>(
+                        485 * escalaPersonalizadaGuardadaY
+                    ),
+                    static_cast<int>(
+                        145 * escalaPersonalizadaGuardadaX
+                    ),
+                    static_cast<int>(
+                        145 * escalaPersonalizadaGuardadaY
+                    )
+                );
+
+                botonBackPersonalizadaGuardada->setIconSize(
+                    QSize(
+                        static_cast<int>(
+                            135 * escalaPersonalizadaGuardada
+                        ),
+                        static_cast<int>(
+                            135 * escalaPersonalizadaGuardada
+                        )
+                    )
+                );
+
+                // LOAD GAME
+                botonLoadPersonalizadaGuardada->setGeometry(
+                    static_cast<int>(
+                        720 * escalaPersonalizadaGuardadaX
+                    ),
+                    static_cast<int>(
+                        700 * escalaPersonalizadaGuardadaY
+                    ),
+                    static_cast<int>(
+                        640 * escalaPersonalizadaGuardadaX
+                    ),
+                    static_cast<int>(
+                        85 * escalaPersonalizadaGuardadaY
+                    )
+                );
+
+                // NEW QUEST
+                botonNewQuestPersonalizada->setGeometry(
+                    static_cast<int>(
+                        680 * escalaPersonalizadaGuardadaX
+                    ),
+                    static_cast<int>(
+                        815 * escalaPersonalizadaGuardadaY
+                    ),
+                    static_cast<int>(
+                        720 * escalaPersonalizadaGuardadaX
+                    ),
+                    static_cast<int>(
+                        85 * escalaPersonalizadaGuardadaY
+                    )
+                );
+
+                QFont fuenteBotonesPersonalizadaGuardada;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteBotonesPersonalizadaGuardada.setFamily(
+                        nombreFuenteAlice
+                    );
+                }
+
+                fuenteBotonesPersonalizadaGuardada.setBold(true);
+
+                fuenteBotonesPersonalizadaGuardada.setPixelSize(
+                    static_cast<int>(
+                        46 * escalaPersonalizadaGuardada
+                    )
+                );
+
+                botonLoadPersonalizadaGuardada->setFont(
+                    fuenteBotonesPersonalizadaGuardada
+                );
+
+                botonNewQuestPersonalizada->setFont(
+                    fuenteBotonesPersonalizadaGuardada
+                );
+
+                fondoPersonalizadaGuardada->lower();
+
+                textoPersonalizadaGuardada->raise();
+
+                botonBackPersonalizadaGuardada->raise();
+                botonLoadPersonalizadaGuardada->raise();
+                botonNewQuestPersonalizada->raise();
             }
 
             // PAGINA CUSTOM MAYHEM
