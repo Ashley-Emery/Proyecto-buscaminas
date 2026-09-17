@@ -112,7 +112,13 @@ ConfiguracionPartida ConfiguracionPartida::crearNivel(int numeroNivel, ModoJuego
         return ConfiguracionPartida(8, 32, 40, obtenerTiempoNivel(numeroNivel), numeroNivel, Dificultad::INTERMEDIO, modo);
     }
 
-    return ConfiguracionPartida(12, 40, 99, obtenerTiempoNivel(numeroNivel), numeroNivel, Dificultad::EXPERTO, modo);
+    int tiempoExperto = obtenerTiempoNivel(numeroNivel);
+
+    if (modo == ModoJuego::PROGRESIVO) {
+        tiempoExperto = 900;
+    }
+
+    return ConfiguracionPartida(12, 40, 99, tiempoExperto, numeroNivel, Dificultad::EXPERTO, modo);
 }
 
 ConfiguracionPartida ConfiguracionPartida::crearPersonalizada(int filas, int columnas) {

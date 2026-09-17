@@ -94,6 +94,8 @@ const string MENU_HIGH_SCORES = "assets/menu/high-scores.png";
 const string MENU_HOW_TO_PLAY = "assets/menu/how-to-play.png";
 const string MENU_MY_PROFILE = "assets/menu/my-profile.png";
 const string MENU_PLAY = "assets/menu/play.png";
+const string MENU_CUSTOM_MAYHEM = "assets/menu/custom-mayhem.png";
+const string MENU_BUBBLE = "assets/menu/bubble.png";
 
 
 // -----------------------------------------------------------------------------
@@ -121,6 +123,7 @@ const string TEMPLATE_HOW_TO_PLAY_3 = "assets/templates/how-to-play-3.png";
 const string TEMPLATE_LEVEL_FAILED = "assets/templates/level-failed.png";
 const string TEMPLATE_LEVEL_WON = "assets/templates/level-won.png";
 const string TEMPLATE_MENU_PRINCIPAL = "assets/templates/menu-principal.png";
+const string TEMPLATE_FINISH_LINE = "assets/templates/finish-line.png";
 
 
 // -----------------------------------------------------------------------------
@@ -148,6 +151,7 @@ const string VIDEO_KING_DICE = "assets/bosses/King-Dice.mp4";
 const string ANIMACION_INTRO = "assets/animations/intro.mp4";
 const string ANIMACION_JULIUS = "assets/animations/julius.mp4";
 const string ANIMACION_TO_THE_RESCUE = "assets/animations/to-the-rescue.mp4";
+const string ANIMACION_JULIUS_CELEBRATES = "assets/animations/julius-celebrates.mp4";
 
 
 // -----------------------------------------------------------------------------

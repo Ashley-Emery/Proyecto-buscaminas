@@ -23,6 +23,7 @@ class Usuario {
         string avatar;
         bool musicaActiva;
         bool recompensaSecretaReclamada;
+        bool recompensaFinalProgresivaReclamada;
 
     public:
         Usuario();
@@ -33,6 +34,7 @@ class Usuario {
         const string &obtenerAvatar() const;
         bool tieneMusicaActiva() const;
         bool reclamoRecompensaSecreta() const;
+        bool reclamoRecompensaFinalProgresiva() const;
 
         bool completoNivel(int numeroNivel) const;
         bool tieneLogro(TipoLogro logro) const;

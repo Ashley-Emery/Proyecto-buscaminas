@@ -110,6 +110,8 @@ class JuegoUI : public QWidget {
         QWidget* paginaSalida;
         QWidget* paginaAyuda;
         QWidget* paginaVictoria;
+        QWidget* paginaCelebracionFinal;
+        QWidget* paginaMisionCumplida;
 
         // INTRO DEL BOSS
         QVideoWidget* videoBoss;
@@ -135,14 +137,24 @@ class JuegoUI : public QWidget {
         QPushButton* botonNextQuestVictoria;
         QPushButton* botonQuitVictoria;
 
+        // CELEBRACION FINAL NIVEL 9
+        QVideoWidget* videoCelebracionFinal;
+        QMediaPlayer* reproductorCelebracionFinal;
+        bool celebracionFinalFinalizada;
+
+        // MISION CUMPLIDA
+        QWidget* contenedorMisionCumplida;
+        QLabel* fondoMisionCumplida;
+        QPushButton* botonCustomMayhemFinal;
+        QPushButton* botonClaimRewardFinal;
+        QLabel* bubbleFinal;
+
         // PANTALLA DE PARTIDA
         QWidget* contenedorDiseno;
         QLabel* fondo;
-
         QVideoWidget* videoBanner;
         QMediaPlayer* reproductorBanner;
         QMediaPlaylist* playlistBanner;
-
         QLabel* labelTiempo;
         QTimer* timerPartida;
 
@@ -150,10 +162,8 @@ class JuegoUI : public QWidget {
         QGraphicsView* vistaTablero;
         QGraphicsScene* escenaTablero;
         CeldaGrafica*** celdasGraficas;
-
         int filasGraficas;
         int columnasGraficas;
-
         int tamanoCeldaBase;
 
         // Mina especifica donde ocurrio el clic de derrota
@@ -200,6 +210,8 @@ class JuegoUI : public QWidget {
                 paginaJulius(nullptr),
                 paginaDerrota(nullptr),
                 paginaVictoria(nullptr),
+                paginaCelebracionFinal(nullptr),
+                paginaMisionCumplida(nullptr),
                 videoJulius(nullptr),
                 reproductorJulius(nullptr),
                 animacionJuliusFinalizada(false),
@@ -211,6 +223,14 @@ class JuegoUI : public QWidget {
                 fondoVictoria(nullptr),
                 botonNextQuestVictoria(nullptr),
                 botonQuitVictoria(nullptr),
+                videoCelebracionFinal(nullptr),
+                reproductorCelebracionFinal(nullptr),
+                celebracionFinalFinalizada(false),
+                contenedorMisionCumplida(nullptr),
+                fondoMisionCumplida(nullptr),
+                botonCustomMayhemFinal(nullptr),
+                botonClaimRewardFinal(nullptr),
+                bubbleFinal(nullptr),
                 videoBoss(nullptr),
                 reproductorBoss(nullptr),
                 introBossFinalizada(false),
@@ -411,6 +431,8 @@ class JuegoUI : public QWidget {
             crearPaginaJulius();
             crearPaginaDerrota();
             crearPaginaVictoria();
+            crearPaginaCelebracionFinal();
+            crearPaginaMisionCumplida();
             crearPaginaSalida();
             crearPaginaAyuda();
 
@@ -421,6 +443,8 @@ class JuegoUI : public QWidget {
             paginaJulius->setGeometry(paginas->rect());
             paginaDerrota->setGeometry(paginas->rect());
             paginaVictoria->setGeometry(paginas->rect());
+            paginaCelebracionFinal->setGeometry(paginas->rect());
+            paginaMisionCumplida->setGeometry(paginas->rect());
             paginaSalida->setGeometry(paginas->rect());
             paginaAyuda->setGeometry(paginas->rect());
 
@@ -664,6 +688,224 @@ class JuegoUI : public QWidget {
             });
 
             paginas->addWidget(paginaVictoria);
+        }
+
+        // ---- PAGINA CELEBRACION FINAL
+        void crearPaginaCelebracionFinal() {
+
+            paginaCelebracionFinal = new QWidget();
+            paginaCelebracionFinal->setStyleSheet("background-color: black;");
+
+            videoCelebracionFinal = new QVideoWidget(paginaCelebracionFinal);
+            videoCelebracionFinal->setAspectRatioMode(Qt::IgnoreAspectRatio);
+
+            reproductorCelebracionFinal = new QMediaPlayer(this);
+            reproductorCelebracionFinal->setVideoOutput(videoCelebracionFinal);
+
+            connect(reproductorCelebracionFinal, &QMediaPlayer::mediaStatusChanged, this, [this](QMediaPlayer::MediaStatus estado) {
+
+                if (estado == QMediaPlayer::EndOfMedia) {
+                    finalizarCelebracionFinal();
+                }
+            });
+
+            paginas->addWidget(paginaCelebracionFinal);
+        }
+
+        // ---- PAGINA MISION CUMPLIDA
+        void crearPaginaMisionCumplida() {
+
+            paginaMisionCumplida = new QWidget();
+
+            contenedorMisionCumplida = new QWidget(paginaMisionCumplida);
+
+            // FONDO
+            fondoMisionCumplida = new QLabel(contenedorMisionCumplida);
+            fondoMisionCumplida->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_FINISH_LINE));
+            fondoMisionCumplida->setPixmap(imagenFondo);
+
+            // BOTON CUSTOM MAYHEM
+            botonCustomMayhemFinal =
+                crearBotonImagen(obtenerRutaMenu("custom-mayhem"));
+
+            botonCustomMayhemFinal->setParent(contenedorMisionCumplida);
+
+            // BOTON CLAIM REWARD
+            botonClaimRewardFinal =
+                crearBotonImagen(obtenerRutaMenu("claim-reward"));
+
+            botonClaimRewardFinal->setParent(contenedorMisionCumplida);
+
+            // BUBBLE
+            bubbleFinal = new QLabel(contenedorMisionCumplida);
+
+            QPixmap imagenBubble(
+                QString::fromStdString(
+                    obtenerRutaMenu("bubble")
+                )
+            );
+
+            bubbleFinal->setPixmap(imagenBubble);
+            bubbleFinal->setScaledContents(true);
+            bubbleFinal->hide();
+
+            connect(botonCustomMayhemFinal, &QPushButton::clicked, this, [this]() {
+                intentarIrCustomMayhemFinal();
+            });
+
+            connect(botonClaimRewardFinal, &QPushButton::clicked, this, [this]() {
+                reclamarRewardFinal();
+            });
+
+            paginas->addWidget(paginaMisionCumplida);
+        }
+
+        // ---- REPRODUCIR CELEBRACION FINAL
+        void reproducirCelebracionFinal() {
+
+            celebracionFinalFinalizada = false;
+
+            reproductorBanner->stop();
+            reproductorMusica->stop();
+            timerPartida->stop();
+
+            reproductorCelebracionFinal->setMedia(
+                crearUrlArchivo(
+                    ANIMACION_JULIUS_CELEBRATES
+                )
+            );
+
+            paginas->setCurrentWidget(
+                paginaCelebracionFinal
+            );
+
+            videoCelebracionFinal->setGeometry(
+                0,
+                0,
+                paginaCelebracionFinal->width(),
+                paginaCelebracionFinal->height()
+            );
+
+            videoCelebracionFinal->show();
+            videoCelebracionFinal->raise();
+
+            reproductorCelebracionFinal->play();
+
+            // El MP4 dura 4 segundos.
+            // Este timer solo es respaldo por si EndOfMedia no llega.
+            QTimer::singleShot(5000, this, [this]() {
+                finalizarCelebracionFinal();
+            });
+        }
+
+        void finalizarCelebracionFinal() {
+
+            if (celebracionFinalFinalizada) {
+                return;
+            }
+
+            celebracionFinalFinalizada = true;
+
+            reproductorCelebracionFinal->stop();
+
+            prepararPantallaMisionCumplida();
+
+            paginas->setCurrentWidget(
+                paginaMisionCumplida
+            );
+
+            ajustarInterfaz();
+        }
+
+        void prepararPantallaMisionCumplida() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            bool rewardReclamado =
+                usuarioActual->reclamoRecompensaFinalProgresiva();
+
+            bubbleFinal->hide();
+
+            // CUSTOM MAYHEM siempre empieza visible y normal.
+            botonCustomMayhemFinal->setEnabled(true);
+            botonCustomMayhemFinal->setCursor(Qt::PointingHandCursor);
+            botonCustomMayhemFinal->setGraphicsEffect(nullptr);
+
+            if (rewardReclamado) {
+
+                // CLAIM REWARD queda congelado.
+                botonClaimRewardFinal->setEnabled(false);
+                botonClaimRewardFinal->setCursor(Qt::ArrowCursor);
+
+            } else {
+
+                botonClaimRewardFinal->setEnabled(true);
+                botonClaimRewardFinal->setCursor(Qt::PointingHandCursor);
+            }
+        }
+
+        void intentarIrCustomMayhemFinal() {
+
+            if (usuarioActual == nullptr) {
+                return;
+            }
+
+            if (!usuarioActual->reclamoRecompensaFinalProgresiva()) {
+
+                // Se bloquea visualmente igual que CLAIM REWARD.
+                botonCustomMayhemFinal->setGraphicsEffect(nullptr);
+                botonCustomMayhemFinal->setEnabled(false);
+                botonCustomMayhemFinal->setCursor(Qt::ArrowCursor);
+
+                bubbleFinal->show();
+                bubbleFinal->raise();
+
+                return;
+            }
+
+            setProperty(
+                "destinoAlCerrar",
+                "personalizado"
+            );
+
+            close();
+        }
+
+        void reclamarRewardFinal() {
+
+            if (
+                usuarioActual == nullptr ||
+                sistemaUsuarios == nullptr
+            ) {
+                return;
+            }
+
+            bool reclamado =
+                SistemaPuntajes::reclamarRecompensaFinalProgresiva(
+                    *usuarioActual,
+                    *sistemaUsuarios
+                );
+
+            if (
+                reclamado ||
+                usuarioActual->reclamoRecompensaFinalProgresiva()
+            ) {
+
+                bubbleFinal->hide();
+
+                // CLAIM REWARD queda congelado.
+                botonClaimRewardFinal->setEnabled(false);
+                botonClaimRewardFinal->setCursor(Qt::ArrowCursor);
+
+                // CUSTOM MAYHEM vuelve a estar disponible.
+                botonCustomMayhemFinal->setGraphicsEffect(nullptr);
+                botonCustomMayhemFinal->setEnabled(true);
+                botonCustomMayhemFinal->setCursor(Qt::PointingHandCursor);
+            }
         }
 
         // ---- PAGINA OPCIONES DE SALIDA
@@ -1163,6 +1405,12 @@ class JuegoUI : public QWidget {
 
                 reproductorBanner->stop();
                 reproductorMusica->stop();
+
+                if (modoActual == ModoJuego::PROGRESIVO && numeroNivelActual == CANTIDAD_NIVELES) {
+
+                    reproducirCelebracionFinal();
+                    return;
+                }
 
                 paginas->setCurrentWidget(paginaVictoria);
 
@@ -2040,6 +2288,98 @@ class JuegoUI : public QWidget {
                 botonQuitVictoria->raise();
             }
 
+            // -------------------------------------------------------------------------
+            // PAGINA MISION CUMPLIDA
+            // -------------------------------------------------------------------------
+
+            if (paginaMisionCumplida != nullptr && contenedorMisionCumplida != nullptr) {
+
+                double escalaFinalX =
+                    static_cast<double>(
+                        paginaMisionCumplida->width()
+                    ) / ANCHO_DISENO_JUEGO;
+
+                double escalaFinalY =
+                    static_cast<double>(
+                        paginaMisionCumplida->height()
+                    ) / ALTO_DISENO_JUEGO;
+
+                double escalaFinal =
+                    qMin(
+                        escalaFinalX,
+                        escalaFinalY
+                    );
+
+
+                // CONTENEDOR
+                contenedorMisionCumplida->setGeometry(
+                    0,
+                    0,
+                    paginaMisionCumplida->width(),
+                    paginaMisionCumplida->height()
+                );
+
+
+                // TEMPLATE COMPLETO
+                fondoMisionCumplida->setGeometry(
+                    0,
+                    0,
+                    contenedorMisionCumplida->width(),
+                    contenedorMisionCumplida->height()
+                );
+
+
+                // GO TO CUSTOM MAYHEM
+                botonCustomMayhemFinal->setGeometry(
+                    static_cast<int>(1130 * escalaFinalX),
+                    static_cast<int>(635 * escalaFinalY),
+                    static_cast<int>(470 * escalaFinalX),
+                    static_cast<int>(120 * escalaFinalY)
+                );
+
+                botonCustomMayhemFinal->setIconSize(
+                    QSize(
+                        static_cast<int>(460 * escalaFinal),
+                        static_cast<int>(110 * escalaFinal)
+                    )
+                );
+
+
+                // CLAIM REWARD
+                botonClaimRewardFinal->setGeometry(
+                    static_cast<int>(315 * escalaFinalX),
+                    static_cast<int>(880 * escalaFinalY),
+                    static_cast<int>(385 * escalaFinalX),
+                    static_cast<int>(125 * escalaFinalY)
+                );
+
+                botonClaimRewardFinal->setIconSize(
+                    QSize(
+                        static_cast<int>(375 * escalaFinal),
+                        static_cast<int>(115 * escalaFinal)
+                    )
+                );
+
+
+                // BUBBLE
+                bubbleFinal->setGeometry(
+                    static_cast<int>(515 * escalaFinalX),
+                    static_cast<int>(85 * escalaFinalY),
+                    static_cast<int>(820 * escalaFinalX),
+                    static_cast<int>(245 * escalaFinalY)
+                );
+
+
+                fondoMisionCumplida->lower();
+
+                botonCustomMayhemFinal->raise();
+                botonClaimRewardFinal->raise();
+
+                if (bubbleFinal->isVisible()) {
+                    bubbleFinal->raise();
+                }
+            }
+
         }
 
         // ---- URL PARA ARCHIVO LOCAL
@@ -2084,6 +2424,16 @@ class JuegoUI : public QWidget {
                     0,
                     paginaJulius->width(),
                     paginaJulius->height()
+                );
+            }
+
+            if (paginaCelebracionFinal != nullptr && videoCelebracionFinal != nullptr) {
+
+                videoCelebracionFinal->setGeometry(
+                    0,
+                    0,
+                    paginaCelebracionFinal->width(),
+                    paginaCelebracionFinal->height()
                 );
             }
 

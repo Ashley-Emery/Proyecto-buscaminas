@@ -332,6 +332,14 @@ string obtenerRutaMenu(const string &opcion) {
         return MENU_PLAY;
     }
 
+    if (opcion == "bubble") {
+        return MENU_BUBBLE;
+    }
+
+    if (opcion == "custom-mayhem") {
+        return MENU_CUSTOM_MAYHEM;
+    }
+
     return "";
 }
 
@@ -418,6 +426,10 @@ string obtenerRutaTemplate(const string &nombreTemplate) {
 
     if (nombreTemplate == "menu-principal") {
         return TEMPLATE_MENU_PRINCIPAL;
+    }
+
+    if (nombreTemplate == "finish-line") {
+        return TEMPLATE_FINISH_LINE;
     }
 
     return "";
@@ -508,6 +520,10 @@ string obtenerRutaAnimacion(const string &nombreAnimacion) {
 
     if (nombreAnimacion == "to-the-rescue") {
         return ANIMACION_TO_THE_RESCUE;
+    }
+
+    if (nombreAnimacion == "julius-celebrates") {
+        return ANIMACION_JULIUS_CELEBRATES;
     }
 
     return "";

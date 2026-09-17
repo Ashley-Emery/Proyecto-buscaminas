@@ -118,6 +118,32 @@ bool SistemaPuntajes::reclamarRecompensaSecreta(Usuario &usuario, SistemaUsuario
     return true;
 }
 
+bool SistemaPuntajes::reclamarRecompensaFinalProgresiva(Usuario &usuario, SistemaUsuarios &sistemaUsuarios) {
+
+    if (usuario.recompensaFinalProgresivaReclamada) {
+        return false;
+    }
+
+    // Solo puede reclamarla quien realmente termino
+    // los nueve niveles del modo progresivo.
+    if (usuario.siguienteNivelProgresivo <= CANTIDAD_NIVELES) {
+        return false;
+    }
+
+    int puntajeAnterior = usuario.puntajeTotal;
+
+    usuario.agregarPuntaje(1000);
+    usuario.recompensaFinalProgresivaReclamada = true;
+
+    if (!sistemaUsuarios.guardar()) {
+        usuario.puntajeTotal = puntajeAnterior;
+        usuario.recompensaFinalProgresivaReclamada = false;
+        return false;
+    }
+
+    return true;
+}
+
 // IMPLEMENTACION DE LOGROS
 void SistemaLogros::evaluarLogros(Usuario &usuario, const Partida &partida) {
 

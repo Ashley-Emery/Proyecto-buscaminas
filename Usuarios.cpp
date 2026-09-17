@@ -70,7 +70,7 @@ bool validarContrasenaFuerte( const string &contrasena, string &mensajeError ) {
 
 
 // USUARIO
-Usuario::Usuario() : puntajeTotal(0), siguienteNivelProgresivo(1), avatar("avatar_1.png"), musicaActiva(true), recompensaSecretaReclamada(false) {
+Usuario::Usuario() : puntajeTotal(0), siguienteNivelProgresivo(1), avatar("avatar_1.png"), musicaActiva(true), recompensaSecretaReclamada(false), recompensaFinalProgresivaReclamada(false) {
     for (int i = 0; i < CANTIDAD_NIVELES; i++) {
         nivelesCompletados[i] = false;
     }
@@ -103,6 +103,11 @@ bool Usuario::tieneMusicaActiva() const {
 bool Usuario::reclamoRecompensaSecreta() const {
 
     return recompensaSecretaReclamada;
+}
+
+bool Usuario::reclamoRecompensaFinalProgresiva() const {
+
+    return recompensaFinalProgresivaReclamada;
 }
 
 bool Usuario::completoNivel(int numeroNivel) const {
