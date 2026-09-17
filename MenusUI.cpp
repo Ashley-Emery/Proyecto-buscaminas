@@ -429,6 +429,38 @@ class MenusUI : public QWidget {
             paginas->setCurrentWidget(paginaIntro);
         }
 
+        void conectarRetornoJuego(QWidget* ventanaJuego) {
+
+            connect(
+                ventanaJuego,
+                &QObject::destroyed,
+                this,
+                [this](QObject* objeto) {
+
+                    QString destino =
+                        objeto->property("destinoAlCerrar").toString();
+
+                    show();
+
+                    if (destino == "mapa") {
+
+                        mostrarMapaNuevo();
+
+                        return;
+                    }
+
+                    if (destino == "personalizado") {
+
+                        mostrarCustomMayhemNuevo();
+
+                        return;
+                    }
+
+                    mostrarMenuPrincipal();
+                }
+            );
+        }
+
         // CARGAR FUENTES
         void cargarFuentes() {
 
@@ -1792,11 +1824,7 @@ class MenusUI : public QWidget {
             ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
             ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
 
-            connect(ventanaJuego, &QObject::destroyed, this, [this]() {
-                show();
-                mostrarMenuPrincipal();
-            });
-
+            conectarRetornoJuego(ventanaJuego);
             ventanaJuego->show();
 
             hide();
@@ -1844,10 +1872,7 @@ class MenusUI : public QWidget {
             ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
             ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
 
-            connect(ventanaJuego, &QObject::destroyed, this, [this]() {
-                show();
-                mostrarMenuPrincipal();
-            });
+            conectarRetornoJuego(ventanaJuego);
 
             ventanaJuego->show();
 
@@ -2008,24 +2033,10 @@ class MenusUI : public QWidget {
                 return;
             }
 
-            ventanaJuego->setAttribute(
-                Qt::WA_DeleteOnClose
-            );
+            ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
+            ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
 
-            ventanaJuego->setAttribute(
-                Qt::WA_QuitOnClose,
-                false
-            );
-
-            connect(
-                ventanaJuego,
-                &QObject::destroyed,
-                this,
-                [this]() {
-                    show();
-                    mostrarMenuPrincipal();
-                }
-            );
+            conectarRetornoJuego(ventanaJuego);
 
             ventanaJuego->show();
 
@@ -2075,10 +2086,7 @@ class MenusUI : public QWidget {
             ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
             ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
 
-            connect(ventanaJuego, &QObject::destroyed, this, [this]() {
-                show();
-                mostrarMenuPrincipal();
-            });
+            conectarRetornoJuego(ventanaJuego);
 
             ventanaJuego->show();
 
@@ -2493,10 +2501,7 @@ class MenusUI : public QWidget {
             ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
             ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
 
-            connect(ventanaJuego, &QObject::destroyed, this, [this]() {
-                show();
-                mostrarMenuPrincipal();
-            });
+            conectarRetornoJuego(ventanaJuego);
 
             ventanaJuego->show();
 
@@ -2523,10 +2528,7 @@ class MenusUI : public QWidget {
             ventanaJuego->setAttribute(Qt::WA_DeleteOnClose);
             ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
 
-            connect(ventanaJuego, &QObject::destroyed, this, [this]() {
-                show();
-                mostrarMenuPrincipal();
-            });
+            conectarRetornoJuego(ventanaJuego);;
 
             ventanaJuego->show();
 

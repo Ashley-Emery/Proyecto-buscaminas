@@ -2,6 +2,8 @@
 #include "Usuarios.h"
 #include "Assets.h"
 
+#include <iostream>
+
 #include <QWidget>
 #include <QStackedWidget>
 #include <QLabel>
@@ -107,6 +109,7 @@ class JuegoUI : public QWidget {
         QWidget* paginaDerrota;
         QWidget* paginaSalida;
         QWidget* paginaAyuda;
+        QWidget* paginaVictoria;
 
         // INTRO DEL BOSS
         QVideoWidget* videoBoss;
@@ -123,9 +126,14 @@ class JuegoUI : public QWidget {
         // PANTALLA LEVEL FAILED
         QWidget* contenedorDerrota;
         QLabel* fondoDerrota;
-
         QPushButton* botonRetryDerrota;
         QPushButton* botonQuitDerrota;
+
+        // PANTALLA LEVEL WON
+        QWidget* contenedorVictoria;
+        QLabel* fondoVictoria;
+        QPushButton* botonNextQuestVictoria;
+        QPushButton* botonQuitVictoria;
 
         // PANTALLA DE PARTIDA
         QWidget* contenedorDiseno;
@@ -191,6 +199,7 @@ class JuegoUI : public QWidget {
                 paginaPartida(nullptr),
                 paginaJulius(nullptr),
                 paginaDerrota(nullptr),
+                paginaVictoria(nullptr),
                 videoJulius(nullptr),
                 reproductorJulius(nullptr),
                 animacionJuliusFinalizada(false),
@@ -198,6 +207,10 @@ class JuegoUI : public QWidget {
                 fondoDerrota(nullptr),
                 botonRetryDerrota(nullptr),
                 botonQuitDerrota(nullptr),
+                contenedorVictoria(nullptr),
+                fondoVictoria(nullptr),
+                botonNextQuestVictoria(nullptr),
+                botonQuitVictoria(nullptr),
                 videoBoss(nullptr),
                 reproductorBoss(nullptr),
                 introBossFinalizada(false),
@@ -239,6 +252,7 @@ class JuegoUI : public QWidget {
                 resultadoProcesado(false) {
 
             setWindowTitle("Minefield Mayhem - The Oppenheimer Incident");
+            setProperty("destinoAlCerrar", "menu");
 
             resize(ANCHO_VENTANA_INICIAL, ALTO_VENTANA_INICIAL);
             setMinimumSize(ANCHO_MINIMO_JUEGO, ALTO_MINIMO_JUEGO);
@@ -396,6 +410,7 @@ class JuegoUI : public QWidget {
             crearPaginaPartida();
             crearPaginaJulius();
             crearPaginaDerrota();
+            crearPaginaVictoria();
             crearPaginaSalida();
             crearPaginaAyuda();
 
@@ -405,6 +420,7 @@ class JuegoUI : public QWidget {
             paginaPartida->setGeometry(paginas->rect());
             paginaJulius->setGeometry(paginas->rect());
             paginaDerrota->setGeometry(paginas->rect());
+            paginaVictoria->setGeometry(paginas->rect());
             paginaSalida->setGeometry(paginas->rect());
             paginaAyuda->setGeometry(paginas->rect());
 
@@ -615,6 +631,39 @@ class JuegoUI : public QWidget {
             });
 
             paginas->addWidget(paginaDerrota);
+        }
+
+        // ---- PAGINA LEVEL WON
+        void crearPaginaVictoria() {
+
+            paginaVictoria = new QWidget();
+
+            contenedorVictoria = new QWidget(paginaVictoria);
+
+            // FONDO
+            fondoVictoria = new QLabel(contenedorVictoria);
+            fondoVictoria->setScaledContents(true);
+
+            QPixmap imagenFondo(QString::fromStdString(TEMPLATE_LEVEL_WON));
+            fondoVictoria->setPixmap(imagenFondo);
+
+            // BOTONES
+            botonNextQuestVictoria = crearBotonTexto("NEXT QUEST");
+            botonQuitVictoria = crearBotonTexto("QUIT GAME");
+
+            botonNextQuestVictoria->setParent(contenedorVictoria);
+            botonQuitVictoria->setParent(contenedorVictoria);
+
+            // ACCIONES
+            connect(botonNextQuestVictoria, &QPushButton::clicked, this, [this]() {
+                continuarDespuesDeVictoria();
+            });
+
+            connect(botonQuitVictoria, &QPushButton::clicked, this, [this]() {
+                salirDespuesDeVictoria();
+            });
+
+            paginas->addWidget(paginaVictoria);
         }
 
         // ---- PAGINA OPCIONES DE SALIDA
@@ -996,6 +1045,36 @@ class JuegoUI : public QWidget {
             }
         }
 
+        //COMENTAR ESTE BLOQUE LUEGO
+        void imprimirTableroDebug() {
+
+            const Tablero* tablero = partida.obtenerTablero();
+
+            if (tablero == nullptr || !tablero->estanSembradasLasMinas()) {
+                return;
+            }
+
+            cout << "\n========== SOLUCION DEL TABLERO ==========\n";
+
+            for (int fila = 0; fila < tablero->obtenerFilas(); fila++) {
+
+                for (int columna = 0; columna < tablero->obtenerColumnas(); columna++) {
+
+                    const Celda* celda = tablero->obtenerCelda(fila, columna);
+
+                    if (celda != nullptr && celda->tieneMina()) {
+                        cout << "B ";
+                    } else {
+                        cout << "* ";
+                    }
+                }
+
+                cout << '\n';
+            }
+
+            cout << "==========================================\n\n";
+        }
+
         // ---- CLIC EN CELDA
         void procesarClicCelda(int fila, int columna, Qt::MouseButton boton) {
 
@@ -1007,7 +1086,16 @@ class JuegoUI : public QWidget {
 
             if (boton == Qt::LeftButton) {
 
+                //COMENTAR ESTE BOOL LUEGO
+                bool minasYaSembradas = partida.obtenerTablero()->estanSembradasLasMinas();
+
                 cambio = partida.procesarClicIzquierdo(fila, columna);
+
+                //COMENTAR ESTE IF LUEGO
+                if (!minasYaSembradas && partida.obtenerTablero()->estanSembradasLasMinas()) {
+
+                    imprimirTableroDebug();
+                }
 
                 const Celda* celda = partida.obtenerTablero()->obtenerCelda(fila, columna);
 
@@ -1076,13 +1164,9 @@ class JuegoUI : public QWidget {
                 reproductorBanner->stop();
                 reproductorMusica->stop();
 
-                // TEMPORAL:
-                // Despues reemplazaremos esto con la pantalla LEVEL WON.
-                QMessageBox::information(
-                    this,
-                    "Level Complete",
-                    "Level completed successfully."
-                );
+                paginas->setCurrentWidget(paginaVictoria);
+
+                ajustarInterfaz();
 
                 return;
             }
@@ -1179,9 +1263,78 @@ class JuegoUI : public QWidget {
             reproductorMusica->stop();
             timerPartida->stop();
 
-            // TEMPORAL:
-            // Cuando conectemos MenusUI.cpp, este punto enviara al usuario
-            // al template del menu principal.
+            setProperty("destinoAlCerrar", "menu");
+            close();
+        }
+
+        // ---- CONTINUAR DESPUES DE VICTORIA
+        void continuarDespuesDeVictoria() {
+
+            reproductorBanner->stop();
+            reproductorMusica->stop();
+            timerPartida->stop();
+
+            // PROGRESIVO
+            if (modoActual == ModoJuego::PROGRESIVO) {
+
+                int siguienteNivel = numeroNivelActual + 1;
+
+                if (siguienteNivel <= CANTIDAD_NIVELES) {
+
+                    configurarNivel(
+                        ModoJuego::PROGRESIVO,
+                        siguienteNivel
+                    );
+
+                    return;
+                }
+
+                // No existe otro nivel despues del nivel 9.
+                setProperty("destinoAlCerrar", "menu");
+                close();
+
+                return;
+            }
+
+            // MAPA
+            if (modoActual == ModoJuego::MAPA) {
+
+                setProperty(
+                    "destinoAlCerrar",
+                    "mapa"
+                );
+
+                close();
+
+                return;
+            }
+
+            // PERSONALIZADO
+            if (modoActual == ModoJuego::PERSONALIZADO) {
+
+                setProperty(
+                    "destinoAlCerrar",
+                    "personalizado"
+                );
+
+                close();
+
+                return;
+            }
+        }
+
+        // ---- SALIR DESPUES DE VICTORIA
+        void salirDespuesDeVictoria() {
+
+            reproductorBanner->stop();
+            reproductorMusica->stop();
+            timerPartida->stop();
+
+            setProperty(
+                "destinoAlCerrar",
+                "menu"
+            );
+
             close();
         }
 
@@ -1250,6 +1403,8 @@ class JuegoUI : public QWidget {
             reproductorBanner->stop();
             reproductorMusica->stop();
 
+            setProperty("destinoAlCerrar", "menu");
+
             close();
         }
 
@@ -1291,6 +1446,8 @@ class JuegoUI : public QWidget {
 
             reproductorBanner->stop();
             reproductorMusica->stop();
+
+            setProperty("destinoAlCerrar", "menu");
 
             close();
         }
@@ -1795,6 +1952,92 @@ class JuegoUI : public QWidget {
 
                 fondoAyuda->lower();
                 botonBackAyuda->raise();
+            }
+
+            // -------------------------------------------------------------------------
+            // PAGINA LEVEL WON
+            // -------------------------------------------------------------------------
+
+            if (paginaVictoria != nullptr && contenedorVictoria != nullptr) {
+
+                double escalaVictoriaX =
+                    static_cast<double>(paginaVictoria->width()) /
+                    ANCHO_DISENO_JUEGO;
+
+                double escalaVictoriaY =
+                    static_cast<double>(paginaVictoria->height()) /
+                    ALTO_DISENO_JUEGO;
+
+                double escalaVictoriaFuente =
+                    qMin(
+                        escalaVictoriaX,
+                        escalaVictoriaY
+                    );
+
+
+                // CONTENEDOR
+                contenedorVictoria->setGeometry(
+                    0,
+                    0,
+                    paginaVictoria->width(),
+                    paginaVictoria->height()
+                );
+
+
+                // TEMPLATE COMPLETO 2080 x 1100
+                fondoVictoria->setGeometry(
+                    0,
+                    0,
+                    contenedorVictoria->width(),
+                    contenedorVictoria->height()
+                );
+
+
+                // NEXT QUEST
+                botonNextQuestVictoria->setGeometry(
+                    static_cast<int>(690 * escalaVictoriaX),
+                    static_cast<int>(710 * escalaVictoriaY),
+                    static_cast<int>(700 * escalaVictoriaX),
+                    static_cast<int>(90 * escalaVictoriaY)
+                );
+
+
+                // QUIT GAME
+                botonQuitVictoria->setGeometry(
+                    static_cast<int>(740 * escalaVictoriaX),
+                    static_cast<int>(825 * escalaVictoriaY),
+                    static_cast<int>(600 * escalaVictoriaX),
+                    static_cast<int>(90 * escalaVictoriaY)
+                );
+
+
+                QFont fuenteVictoria;
+
+                if (!nombreFuenteAlice.isEmpty()) {
+                    fuenteVictoria.setFamily(nombreFuenteAlice);
+                }
+
+                fuenteVictoria.setBold(true);
+
+                fuenteVictoria.setPixelSize(
+                    static_cast<int>(
+                        52 * escalaVictoriaFuente
+                    )
+                );
+
+                botonNextQuestVictoria->setFont(
+                    fuenteVictoria
+                );
+
+                botonQuitVictoria->setFont(
+                    fuenteVictoria
+                );
+
+
+                fondoVictoria->lower();
+
+                botonNextQuestVictoria->raise();
+                botonQuitVictoria->raise();
             }
 
         }
