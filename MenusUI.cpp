@@ -3137,26 +3137,26 @@ class MenusUI : public QWidget {
 
                 // NIVEL 1 - PIRATE MINEFIELD
                 botonesNivelMapa[0]->setGeometry(
-                    static_cast<int>(252 * escalaMapaX),
-                    static_cast<int>(600 * escalaMapaY),
+                    static_cast<int>(322 * escalaMapaX),
+                    static_cast<int>(572 * escalaMapaY),
                     static_cast<int>(303 * escalaMapaX),
-                    static_cast<int>(229 * escalaMapaY)
+                    static_cast<int>(228 * escalaMapaY)
                 );
 
 
                 // NIVEL 2 - CARNIVAL MINEFIELD
                 botonesNivelMapa[1]->setGeometry(
-                    static_cast<int>(486 * escalaMapaX),
-                    static_cast<int>(323 * escalaMapaY),
+                    static_cast<int>(518 * escalaMapaX),
+                    static_cast<int>(301 * escalaMapaY),
                     static_cast<int>(303 * escalaMapaX),
-                    static_cast<int>(227 * escalaMapaY)
+                    static_cast<int>(228 * escalaMapaY)
                 );
 
 
                 // NIVEL 3 - DRAGON MINEFIELD
                 botonesNivelMapa[2]->setGeometry(
-                    static_cast<int>(769 * escalaMapaX),
-                    static_cast<int>(44 * escalaMapaY),
+                    static_cast<int>(872 * escalaMapaX),
+                    static_cast<int>(111 * escalaMapaY),
                     static_cast<int>(303 * escalaMapaX),
                     static_cast<int>(228 * escalaMapaY)
                 );
@@ -3164,54 +3164,54 @@ class MenusUI : public QWidget {
 
                 // NIVEL 4 - RUMBLE MINEFIELD
                 botonesNivelMapa[3]->setGeometry(
-                    static_cast<int>(1225 * escalaMapaX),
-                    static_cast<int>(158 * escalaMapaY),
-                    static_cast<int>(303 * escalaMapaX),
-                    static_cast<int>(228 * escalaMapaY)
+                    static_cast<int>(1241 * escalaMapaX),
+                    static_cast<int>(144 * escalaMapaY),
+                    static_cast<int>(304 * escalaMapaX),
+                    static_cast<int>(229 * escalaMapaY)
                 );
 
 
                 // NIVEL 5 - HIGH SEAS MINEFIELD
                 botonesNivelMapa[4]->setGeometry(
-                    static_cast<int>(1596 * escalaMapaX),
-                    static_cast<int>(344 * escalaMapaY),
-                    static_cast<int>(303 * escalaMapaX),
+                    static_cast<int>(1571 * escalaMapaX),
+                    static_cast<int>(322 * escalaMapaY),
+                    static_cast<int>(304 * escalaMapaX),
                     static_cast<int>(228 * escalaMapaY)
                 );
 
 
                 // NIVEL 6 - MECHANICAL MINEFIELD
                 botonesNivelMapa[5]->setGeometry(
-                    static_cast<int>(1127 * escalaMapaX),
-                    static_cast<int>(470 * escalaMapaY),
-                    static_cast<int>(304 * escalaMapaX),
+                    static_cast<int>(1075 * escalaMapaX),
+                    static_cast<int>(415 * escalaMapaY),
+                    static_cast<int>(303 * escalaMapaX),
                     static_cast<int>(229 * escalaMapaY)
                 );
 
 
                 // NIVEL 7 - AERIAL MINEFIELD
                 botonesNivelMapa[6]->setGeometry(
-                    static_cast<int>(616 * escalaMapaX),
-                    static_cast<int>(740 * escalaMapaY),
+                    static_cast<int>(684 * escalaMapaX),
+                    static_cast<int>(657 * escalaMapaY),
                     static_cast<int>(303 * escalaMapaX),
-                    static_cast<int>(228 * escalaMapaY)
+                    static_cast<int>(229 * escalaMapaY)
                 );
 
 
                 // NIVEL 8 - BAKER'S MINEFIELD
                 botonesNivelMapa[7]->setGeometry(
-                    static_cast<int>(1040 * escalaMapaX),
-                    static_cast<int>(762 * escalaMapaY),
+                    static_cast<int>(1059 * escalaMapaX),
+                    static_cast<int>(673 * escalaMapaY),
                     static_cast<int>(304 * escalaMapaX),
-                    static_cast<int>(228 * escalaMapaY)
+                    static_cast<int>(229 * escalaMapaY)
                 );
 
 
                 // NIVEL 9 - ONE HELL OF A MINEFIELD
                 botonesNivelMapa[8]->setGeometry(
-                    static_cast<int>(1492 * escalaMapaX),
-                    static_cast<int>(740 * escalaMapaY),
-                    static_cast<int>(302 * escalaMapaX),
+                    static_cast<int>(1457 * escalaMapaX),
+                    static_cast<int>(687 * escalaMapaY),
+                    static_cast<int>(303 * escalaMapaX),
                     static_cast<int>(228 * escalaMapaY)
                 );
 
