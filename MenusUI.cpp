@@ -231,6 +231,14 @@ class MenusUI : public QWidget {
         QComboBox* comboColumnasCustomMayhem;
         QPushButton* botonBackCustomMayhem;
         QPushButton* botonPlayGameCustomMayhem;
+        QPushButton* botonMapaCustomMayhem;
+
+        // MAPA CALAMITY CAYS
+        QWidget* paginaMapaCustomMayhem;
+        QWidget* contenedorMapaCustomMayhem;
+        QLabel* fondoMapaCustomMayhem;
+        QPushButton* botonBackMapaCustomMayhem;
+
 
     public:
 
@@ -361,6 +369,11 @@ class MenusUI : public QWidget {
                 botonBackPersonalizadaGuardada(nullptr),
                 botonLoadPersonalizadaGuardada(nullptr),
                 botonNewQuestPersonalizada(nullptr),
+                botonMapaCustomMayhem(nullptr),
+                paginaMapaCustomMayhem(nullptr),
+                contenedorMapaCustomMayhem(nullptr),
+                fondoMapaCustomMayhem(nullptr),
+                botonBackMapaCustomMayhem(nullptr),
                 botonExit(nullptr) {
 
             for (int i = 0; i < CANTIDAD_NIVELES; i++) {
@@ -416,6 +429,7 @@ class MenusUI : public QWidget {
             crearPaginaMapaGuardada();
             crearPaginaPersonalizadaGuardada();
             crearPaginaCustomMayhem();
+            crearPaginaMapaCustomMayhem();
 
             if (!sistemaUsuarios.cargar()) {
 
@@ -1555,6 +1569,10 @@ class MenusUI : public QWidget {
             botonBackCustomMayhem = crearBotonImagen(obtenerRutaBoton("back"));
             botonBackCustomMayhem->setParent(contenedorCustomMayhem);
 
+            // MAPA CALAMITY CAYS
+            botonMapaCustomMayhem = crearBotonImagen(obtenerRutaBoton("map"));
+            botonMapaCustomMayhem->setParent(contenedorCustomMayhem);
+
             // PLAY GAME
             botonPlayGameCustomMayhem = crearBotonTexto("PLAY GAME");
             botonPlayGameCustomMayhem->setParent(contenedorCustomMayhem);
@@ -1568,7 +1586,63 @@ class MenusUI : public QWidget {
                 iniciarPartidaPersonalizada();
             });
 
+            connect(botonMapaCustomMayhem, &QPushButton::clicked, this, [this]() {
+                mostrarMapaCustomMayhem();
+            });
+
             paginas->addWidget(paginaCustomMayhem);
+        }
+
+        // PAGINA MAPA CALAMITY CAYS
+        void crearPaginaMapaCustomMayhem() {
+
+            paginaMapaCustomMayhem = new QWidget();
+            contenedorMapaCustomMayhem = new QWidget(paginaMapaCustomMayhem);
+
+            // FONDO
+            fondoMapaCustomMayhem = new QLabel(contenedorMapaCustomMayhem);
+            fondoMapaCustomMayhem->setScaledContents(true);
+
+            QPixmap imagenMapa(
+                QString::fromStdString(TEMPLATE_CALAMITY_CAYS_MAP)
+            );
+
+            fondoMapaCustomMayhem->setPixmap(imagenMapa);
+
+            // BACK
+            botonBackMapaCustomMayhem =
+                crearBotonImagen(obtenerRutaBoton("back"));
+
+            botonBackMapaCustomMayhem->setParent(
+                contenedorMapaCustomMayhem
+            );
+
+            // ACCION
+            connect(
+                botonBackMapaCustomMayhem,
+                &QPushButton::clicked,
+                this,
+                [this]() {
+                    mostrarCustomMayhemDesdeMapa();
+                }
+            );
+
+            paginas->addWidget(paginaMapaCustomMayhem);
+        }
+
+        void mostrarMapaCustomMayhem() {
+
+            paginas->setCurrentWidget(paginaMapaCustomMayhem);
+
+            ajustarInterfaz();
+        }
+
+
+        void mostrarCustomMayhemDesdeMapa() {
+
+            paginas->setCurrentWidget(paginaCustomMayhem);
+
+            ajustarInterfaz();
         }
 
         // CREAR BOTON DE TEXTO
@@ -4599,6 +4673,21 @@ class MenusUI : public QWidget {
                     )
                 );
 
+                // MAPA CALAMITY CAYS
+                botonMapaCustomMayhem->setGeometry(
+                    static_cast<int>(1765 * escalaCustomX),
+                    static_cast<int>(500 * escalaCustomY),
+                    static_cast<int>(145 * escalaCustomX),
+                    static_cast<int>(145 * escalaCustomY)
+                );
+
+                botonMapaCustomMayhem->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaCustom),
+                        static_cast<int>(135 * escalaCustom)
+                    )
+                );
+
                 fondoCustomMayhem->lower();
 
                 textoCustomMayhem->raise();
@@ -4609,7 +4698,58 @@ class MenusUI : public QWidget {
                 comboColumnasCustomMayhem->raise();
 
                 botonBackCustomMayhem->raise();
+                botonMapaCustomMayhem->raise();
                 botonPlayGameCustomMayhem->raise();
+            }
+
+            // PAGINA MAPA CALAMITY CAYS
+            if (paginaMapaCustomMayhem != nullptr &&
+                contenedorMapaCustomMayhem != nullptr) {
+
+                double escalaMapaCustomX =
+                    static_cast<double>(paginaMapaCustomMayhem->width()) /
+                    ANCHO_DISENO_MENU;
+
+                double escalaMapaCustomY =
+                    static_cast<double>(paginaMapaCustomMayhem->height()) /
+                    ALTO_DISENO_MENU;
+
+                double escalaMapaCustom =
+                    qMin(escalaMapaCustomX, escalaMapaCustomY);
+
+                // CONTENEDOR
+                contenedorMapaCustomMayhem->setGeometry(
+                    0,
+                    0,
+                    paginaMapaCustomMayhem->width(),
+                    paginaMapaCustomMayhem->height()
+                );
+
+                // MAPA
+                fondoMapaCustomMayhem->setGeometry(
+                    0,
+                    0,
+                    contenedorMapaCustomMayhem->width(),
+                    contenedorMapaCustomMayhem->height()
+                );
+
+                // BACK
+                botonBackMapaCustomMayhem->setGeometry(
+                    static_cast<int>(40 * escalaMapaCustomX),
+                    static_cast<int>(475 * escalaMapaCustomY),
+                    static_cast<int>(145 * escalaMapaCustomX),
+                    static_cast<int>(145 * escalaMapaCustomY)
+                );
+
+                botonBackMapaCustomMayhem->setIconSize(
+                    QSize(
+                        static_cast<int>(135 * escalaMapaCustom),
+                        static_cast<int>(135 * escalaMapaCustom)
+                    )
+                );
+
+                fondoMapaCustomMayhem->lower();
+                botonBackMapaCustomMayhem->raise();
             }
 
         }

@@ -208,6 +208,10 @@ string obtenerRutaBoton(const string &accion) {
         return BOTON_SAVE;
     }
 
+    if (accion == "map") {
+        return BOTON_MAP;
+    }
+
     return "";
 }
 

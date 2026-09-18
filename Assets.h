@@ -57,6 +57,7 @@ const string BOTON_RETRY = "assets/buttons/retry.png";
 const string BOTON_REWARDS = "assets/buttons/rewards.png";
 const string BOTON_SAVE = "assets/buttons/save.png";
 const string BOTON_DROPDOWN = "assets/buttons/dropdown.png";
+const string BOTON_MAP = "assets/buttons/map.png";
 
 
 // -----------------------------------------------------------------------------
