@@ -176,6 +176,11 @@ class JuegoUI : public QWidget {
         QPushButton* botonHelp;
         QPushButton* botonMusic;
 
+        // INFO DEL NIVEL
+        QPushButton* botonFlagNivel;
+        QLabel* bannerNivel;
+        bool bannerNivelVisible;
+
         // MUSICA
         QMediaPlayer* reproductorMusica;
         QMediaPlaylist* playlistMusica;
@@ -256,6 +261,9 @@ class JuegoUI : public QWidget {
                 botonRetry(nullptr),
                 botonHelp(nullptr),
                 botonMusic(nullptr),
+                botonFlagNivel(nullptr),
+                bannerNivel(nullptr),
+                bannerNivelVisible(false),
                 reproductorMusica(nullptr),
                 playlistMusica(nullptr),
                 paginaSalida(nullptr),
@@ -349,6 +357,7 @@ class JuegoUI : public QWidget {
             crearTableroGrafico();
             actualizarTiempo();
             configurarMusica();
+            configurarInfoNivel();
 
             paginas->setCurrentWidget(paginaPartida);
 
@@ -392,6 +401,7 @@ class JuegoUI : public QWidget {
             crearTableroGrafico();
             actualizarTiempo();
             configurarMusica();
+            configurarInfoNivel();
 
             reproducirIntroBoss();
 
@@ -558,6 +568,25 @@ class JuegoUI : public QWidget {
             botonHelp = crearBotonImagen(obtenerRutaBoton("help"));
             botonMusic = crearBotonImagen(obtenerRutaBoton("music"));
 
+            // BANDERA DE INFORMACION DEL NIVEL
+            botonFlagNivel = new QPushButton(contenedorDiseno);
+            botonFlagNivel->setStyleSheet(
+                "QPushButton {"
+                "background: transparent;"
+                "border: none;"
+                "}"
+            );
+            botonFlagNivel->setCursor(Qt::PointingHandCursor);
+            botonFlagNivel->setFocusPolicy(Qt::NoFocus);
+
+            // BANNER CON NOMBRE DEL NIVEL Y BOSS
+            bannerNivel = new QLabel(contenedorDiseno);
+            bannerNivel->setScaledContents(true);
+            bannerNivel->setStyleSheet("background: transparent;");
+            bannerNivel->hide();
+
+            bannerNivelVisible = false;
+
             botonHome->setParent(contenedorDiseno);
             botonRetry->setParent(contenedorDiseno);
             botonHelp->setParent(contenedorDiseno);
@@ -579,6 +608,10 @@ class JuegoUI : public QWidget {
                 mostrarOpcionesSalida();
             });
 
+            connect(botonFlagNivel, &QPushButton::clicked, this, [this]() {
+                alternarBannerNivel();
+            });
+
             // MUSICA
             reproductorMusica = new QMediaPlayer(this);
 
@@ -588,6 +621,88 @@ class JuegoUI : public QWidget {
             reproductorMusica->setPlaylist(playlistMusica);
 
             paginas->addWidget(paginaPartida);
+        }
+
+        int obtenerNumeroVisualPersonalizado() const {
+
+            BossPersonalizado boss = obtenerBossPersonalizado(
+                configuracionActual.obtenerFilas(),
+                configuracionActual.obtenerColumnas()
+            );
+
+            switch (boss) {
+
+                case BossPersonalizado::HILDA_BERG:
+                    return 1;
+
+                case BossPersonalizado::WERNER_WERMAN:
+                    return 2;
+
+                case BossPersonalizado::BARONESS_VON_BON_BON:
+                    return 3;
+
+                case BossPersonalizado::DJIMMI_THE_GREAT:
+                    return 4;
+
+                case BossPersonalizado::KING_DICE:
+                    return 5;
+            }
+
+            return 1;
+        }
+
+        void configurarInfoNivel() {
+
+            if (botonFlagNivel == nullptr || bannerNivel == nullptr) {
+                return;
+            }
+
+            int numeroFlag = numeroNivelActual;
+            string rutaBanner;
+
+            if (modoActual == ModoJuego::PERSONALIZADO) {
+
+                numeroFlag = obtenerNumeroVisualPersonalizado();
+
+                BossPersonalizado boss = obtenerBossPersonalizado(
+                    configuracionActual.obtenerFilas(),
+                    configuracionActual.obtenerColumnas()
+                );
+
+                rutaBanner = obtenerRutaBanner(boss);
+
+            } else {
+
+                BossNivel boss = obtenerBossNivel(numeroNivelActual);
+
+                rutaBanner = obtenerRutaBanner(boss);
+            }
+
+            string rutaFlag = obtenerRutaFlag(numeroFlag);
+
+            botonFlagNivel->setIcon(
+                QIcon(QString::fromStdString(rutaFlag))
+            );
+
+            bannerNivel->setPixmap(
+                QPixmap(QString::fromStdString(rutaBanner))
+            );
+
+            bannerNivelVisible = false;
+            bannerNivel->hide();
+        }
+
+        void alternarBannerNivel() {
+
+            bannerNivelVisible = !bannerNivelVisible;
+
+            if (bannerNivelVisible) {
+                bannerNivel->show();
+                bannerNivel->raise();
+                botonFlagNivel->raise();
+            } else {
+                bannerNivel->hide();
+            }
         }
 
         // ---- PAGINA JULIUS
@@ -1021,6 +1136,7 @@ class JuegoUI : public QWidget {
             crearTableroGrafico();
             actualizarTiempo();
             configurarMusica();
+            configurarInfoNivel();
 
             // Primero se presenta el boss
             reproducirIntroBoss();
@@ -1990,6 +2106,42 @@ class JuegoUI : public QWidget {
             botonRetry->raise();
             botonHelp->raise();
             botonMusic->raise();
+
+            if (bannerNivelVisible) {
+                bannerNivel->raise();
+            }
+
+            botonFlagNivel->raise();
+
+            // -------------------------------------------------------------------------
+            // FLAG DE NIVEL
+            // -------------------------------------------------------------------------
+
+            botonFlagNivel->setGeometry(
+                static_cast<int>(1535 * escalaX),
+                static_cast<int>(890 * escalaY),
+                static_cast<int>(125 * escalaFuente),
+                static_cast<int>(125 * escalaFuente)
+            );
+
+            botonFlagNivel->setIconSize(
+                QSize(
+                    static_cast<int>(120 * escalaFuente),
+                    static_cast<int>(120 * escalaFuente)
+                )
+            );
+
+
+            // -------------------------------------------------------------------------
+            // BANNER INFORMATIVO DEL NIVEL
+            // -------------------------------------------------------------------------
+
+            bannerNivel->setGeometry(
+                static_cast<int>(300 * escalaX),
+                static_cast<int>(355 * escalaY),
+                static_cast<int>(1480 * escalaX),
+                static_cast<int>(455 * escalaY)
+            );
 
             // -------------------------------------------------------------------------
             // PAGINA LEVEL FAILED

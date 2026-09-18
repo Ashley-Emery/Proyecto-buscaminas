@@ -528,3 +528,110 @@ string obtenerRutaAnimacion(const string &nombreAnimacion) {
 
     return "";
 }
+
+// -----------------------------------------------------------------------------
+// BANDERAS DE NIVEL
+// -----------------------------------------------------------------------------
+
+string obtenerRutaFlag(int numeroNivel) {
+
+    switch (numeroNivel) {
+
+        case 1:
+            return FLAG_1;
+
+        case 2:
+            return FLAG_2;
+
+        case 3:
+            return FLAG_3;
+
+        case 4:
+            return FLAG_4;
+
+        case 5:
+            return FLAG_5;
+
+        case 6:
+            return FLAG_6;
+
+        case 7:
+            return FLAG_7;
+
+        case 8:
+            return FLAG_8;
+
+        case 9:
+            return FLAG_9;
+    }
+
+    return "";
+}
+
+
+// -----------------------------------------------------------------------------
+// BANNERS - PROGRESIVO / MAPA
+// -----------------------------------------------------------------------------
+
+string obtenerRutaBanner(BossNivel boss) {
+
+    switch (boss) {
+
+        case BossNivel::CAPTAIN_BRINEYBEARD:
+            return BANNER_PIRATE_MINEFIELD;
+
+        case BossNivel::BEPPI_THE_CLOWN:
+            return BANNER_CARNIVAL_MINEFIELD;
+
+        case BossNivel::GRIM_MATCHSTICK:
+            return BANNER_DRAGON_MINEFIELD;
+
+        case BossNivel::RIBBY_AND_CROAKS:
+            return BANNER_RUMBLE_MINEFIELD;
+
+        case BossNivel::CALA_MARIA:
+            return BANNER_HIGH_SEAS_MINEFIELD;
+
+        case BossNivel::DR_KAHL_ROBOT:
+            return BANNER_MECHANICAL_MINEFIELD;
+
+        case BossNivel::WALLY_WARBLES:
+            return BANNER_AERIAL_MINEFIELD;
+
+        case BossNivel::CHEF_SALTBAKER:
+            return BANNER_BAKERS_MINEFIELD;
+
+        case BossNivel::THE_DEVIL:
+            return BANNER_ONE_HELL_OF_A_MINEFIELD;
+    }
+
+    return "";
+}
+
+
+// -----------------------------------------------------------------------------
+// BANNERS - PERSONALIZADO
+// -----------------------------------------------------------------------------
+
+string obtenerRutaBanner(BossPersonalizado boss) {
+
+    switch (boss) {
+
+        case BossPersonalizado::HILDA_BERG:
+            return BANNER_ZODIAC_MINEFIELD;
+
+        case BossPersonalizado::WERNER_WERMAN:
+            return BANNER_MOUSE_TRAP_MINEFIELD;
+
+        case BossPersonalizado::BARONESS_VON_BON_BON:
+            return BANNER_CANDYLAND_MINEFIELD;
+
+        case BossPersonalizado::DJIMMI_THE_GREAT:
+            return BANNER_MYSTICAL_MINEFIELD;
+
+        case BossPersonalizado::KING_DICE:
+            return BANNER_ALL_BETS_ARE_MINED;
+    }
+
+    return "";
+}

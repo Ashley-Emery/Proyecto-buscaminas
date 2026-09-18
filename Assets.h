@@ -155,6 +155,43 @@ const string ANIMACION_JULIUS_CELEBRATES = "assets/animations/julius-celebrates.
 
 
 // -----------------------------------------------------------------------------
+// BANDERAS DE NIVEL
+// -----------------------------------------------------------------------------
+const string FLAG_1 = "assets/flags/1.png";
+const string FLAG_2 = "assets/flags/2.png";
+const string FLAG_3 = "assets/flags/3.png";
+const string FLAG_4 = "assets/flags/4.png";
+const string FLAG_5 = "assets/flags/5.png";
+const string FLAG_6 = "assets/flags/6.png";
+const string FLAG_7 = "assets/flags/7.png";
+const string FLAG_8 = "assets/flags/8.png";
+const string FLAG_9 = "assets/flags/9.png";
+
+
+// -----------------------------------------------------------------------------
+// BANNERS DE NIVEL
+// -----------------------------------------------------------------------------
+
+// PROGRESIVO / MAPA
+const string BANNER_PIRATE_MINEFIELD = "assets/banners/pirate-minefield.png";
+const string BANNER_CARNIVAL_MINEFIELD = "assets/banners/carnival-minefield.png";
+const string BANNER_DRAGON_MINEFIELD = "assets/banners/dragon-minefield.png";
+const string BANNER_RUMBLE_MINEFIELD = "assets/banners/rumble-minefield.png";
+const string BANNER_HIGH_SEAS_MINEFIELD = "assets/banners/high-seas-minefield.png";
+const string BANNER_MECHANICAL_MINEFIELD = "assets/banners/mechanical-minefield.png";
+const string BANNER_AERIAL_MINEFIELD = "assets/banners/aerial-minefield.png";
+const string BANNER_BAKERS_MINEFIELD = "assets/banners/bakers-minefield.png";
+const string BANNER_ONE_HELL_OF_A_MINEFIELD = "assets/banners/one-hell-of-a-minefield.png";
+
+// PERSONALIZADO
+const string BANNER_ZODIAC_MINEFIELD = "assets/banners/zodiac-minefield.png";
+const string BANNER_MOUSE_TRAP_MINEFIELD = "assets/banners/mouse-trap-minefield.png";
+const string BANNER_CANDYLAND_MINEFIELD = "assets/banners/candyland-minefield.png";
+const string BANNER_MYSTICAL_MINEFIELD = "assets/banners/mystical-minefield.png";
+const string BANNER_ALL_BETS_ARE_MINED = "assets/banners/all-bets-are-mined.png";
+
+
+// -----------------------------------------------------------------------------
 // FUNCIONES DE ASSETS
 // -----------------------------------------------------------------------------
 
@@ -189,5 +226,11 @@ string obtenerRutaVideoBoss(BossPersonalizado boss);
 string obtenerRutaAnimacion(const string &nombreAnimacion);
 
 string obtenerRutaRanking(const string &elemento);
+
+string obtenerRutaFlag(int numeroNivel);
+
+string obtenerRutaBanner(BossNivel boss);
+
+string obtenerRutaBanner(BossPersonalizado boss);
 
 #endif
