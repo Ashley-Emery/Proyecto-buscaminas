@@ -516,7 +516,8 @@ class JuegoUI : public QWidget {
             playlistBanner = new QMediaPlaylist(this);
 
             playlistBanner->addMedia(crearUrlArchivo(ANIMACION_TO_THE_RESCUE));
-            playlistBanner->setPlaybackMode(QMediaPlaylist::Loop);
+            playlistBanner->setCurrentIndex(0);
+            playlistBanner->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
 
             reproductorBanner->setPlaylist(playlistBanner);
             reproductorBanner->setVideoOutput(videoBanner);
