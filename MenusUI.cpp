@@ -3091,12 +3091,12 @@ class MenusUI : public QWidget {
                     static_cast<int>(145 * escalaMenuY)
                 );
 
-                // BOTON INVISIBLE SOBRE LOS CUBOS ROSADOS
+                // BOTON INVISIBLE SOBRE EL CUBO SUPERIOR
                 botonHuevoPascua->setGeometry(
-                    static_cast<int>(80 * escalaMenuX),
-                    static_cast<int>(600 * escalaMenuY),
-                    static_cast<int>(190 * escalaMenuX),
-                    static_cast<int>(165 * escalaMenuY)
+                    static_cast<int>(160 * escalaMenuX),
+                    static_cast<int>(620 * escalaMenuY),
+                    static_cast<int>(50 * escalaMenuX),
+                    static_cast<int>(50 * escalaMenuY)
                 );
 
                 // TEXTO DE BIENVENIDA
