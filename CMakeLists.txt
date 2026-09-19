@@ -34,3 +34,7 @@ target_link_libraries(Proyecto-buscaminas
     Qt5::Multimedia
     Qt5::MultimediaWidgets
 )
+
+target_include_directories(Proyecto-buscaminas PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
