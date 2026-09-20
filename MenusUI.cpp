@@ -454,7 +454,33 @@ class MenusUI : public QWidget {
                     QString destino =
                         objeto->property("destinoAlCerrar").toString();
 
-                    show();
+                    QRect geometriaJuego =
+                        objeto->property("geometriaAlCerrar").toRect();
+
+                    bool estabaMaximizada =
+                        objeto->property("estabaMaximizada").toBool();
+
+                    bool estabaFullScreen =
+                        objeto->property("estabaFullScreen").toBool();
+
+                    if (estabaFullScreen) {
+
+                        showFullScreen();
+
+                    } else if (estabaMaximizada) {
+
+                        showMaximized();
+
+                    } else {
+
+                        showNormal();
+
+                        if (geometriaJuego.isValid()) {
+                            setGeometry(geometriaJuego);
+                        }
+
+                        show();
+                    }
 
                     if (destino == "mapa") {
 

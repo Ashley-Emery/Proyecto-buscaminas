@@ -32,6 +32,8 @@
 
 #include <functional>
 
+#include <QCloseEvent>
+
 using namespace std;
 
 
@@ -2626,6 +2628,15 @@ class JuegoUI : public QWidget {
             }
 
             ajustarInterfaz();
+        }
+
+        void closeEvent(QCloseEvent* evento) override {
+
+            setProperty("geometriaAlCerrar", geometry());
+            setProperty("estabaMaximizada", isMaximized());
+            setProperty("estabaFullScreen", isFullScreen());
+
+            QWidget::closeEvent(evento);
         }
 };
 
