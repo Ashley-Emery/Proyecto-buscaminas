@@ -1418,34 +1418,34 @@ class JuegoUI : public QWidget {
         }
 
         //COMENTAR ESTE BLOQUE LUEGO
-        void imprimirTableroDebug() {
+        // void imprimirTableroDebug() {
 
-            const Tablero* tablero = partida.obtenerTablero();
+        //     const Tablero* tablero = partida.obtenerTablero();
 
-            if (tablero == nullptr || !tablero->estanSembradasLasMinas()) {
-                return;
-            }
+        //     if (tablero == nullptr || !tablero->estanSembradasLasMinas()) {
+        //         return;
+        //     }
 
-            cout << "\n========== SOLUCION DEL TABLERO ==========\n";
+        //     cout << "\n========== SOLUCION DEL TABLERO ==========\n";
 
-            for (int fila = 0; fila < tablero->obtenerFilas(); fila++) {
+        //     for (int fila = 0; fila < tablero->obtenerFilas(); fila++) {
 
-                for (int columna = 0; columna < tablero->obtenerColumnas(); columna++) {
+        //         for (int columna = 0; columna < tablero->obtenerColumnas(); columna++) {
 
-                    const Celda* celda = tablero->obtenerCelda(fila, columna);
+        //             const Celda* celda = tablero->obtenerCelda(fila, columna);
 
-                    if (celda != nullptr && celda->tieneMina()) {
-                        cout << "B ";
-                    } else {
-                        cout << "* ";
-                    }
-                }
+        //             if (celda != nullptr && celda->tieneMina()) {
+        //                 cout << "B ";
+        //             } else {
+        //                 cout << "* ";
+        //             }
+        //         }
 
-                cout << '\n';
-            }
+        //         cout << '\n';
+        //     }
 
-            cout << "==========================================\n\n";
-        }
+        //     cout << "==========================================\n\n";
+        // }
 
         // ---- CLIC EN CELDA
         void procesarClicCelda(int fila, int columna, Qt::MouseButton boton) {
@@ -1459,15 +1459,15 @@ class JuegoUI : public QWidget {
             if (boton == Qt::LeftButton) {
 
                 //COMENTAR ESTE BOOL LUEGO
-                bool minasYaSembradas = partida.obtenerTablero()->estanSembradasLasMinas();
+                //bool minasYaSembradas = partida.obtenerTablero()->estanSembradasLasMinas();
 
                 cambio = partida.procesarClicIzquierdo(fila, columna);
 
                 //COMENTAR ESTE IF LUEGO
-                if (!minasYaSembradas && partida.obtenerTablero()->estanSembradasLasMinas()) {
+                // if (!minasYaSembradas && partida.obtenerTablero()->estanSembradasLasMinas()) {
 
-                    imprimirTableroDebug();
-                }
+                //     imprimirTableroDebug();
+                // }
 
                 const Celda* celda = partida.obtenerTablero()->obtenerCelda(fila, columna);
 
