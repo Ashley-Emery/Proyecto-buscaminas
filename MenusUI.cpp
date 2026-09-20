@@ -1645,6 +1645,26 @@ class MenusUI : public QWidget {
             ajustarInterfaz();
         }
 
+        void mostrarVentanaJuegoConTamanoActual(QWidget* ventanaJuego) {
+
+            if (ventanaJuego == nullptr) {
+                return;
+            }
+
+            if (isFullScreen()) {
+                ventanaJuego->showFullScreen();
+                return;
+            }
+
+            if (isMaximized()) {
+                ventanaJuego->showMaximized();
+                return;
+            }
+
+            ventanaJuego->setGeometry(geometry());
+            ventanaJuego->show();
+        }
+
         // CREAR BOTON DE TEXTO
         QPushButton* crearBotonTexto(const QString &texto) {
 
@@ -1899,7 +1919,7 @@ class MenusUI : public QWidget {
             ventanaJuego->setAttribute(Qt::WA_QuitOnClose, false);
 
             conectarRetornoJuego(ventanaJuego);
-            ventanaJuego->show();
+            mostrarVentanaJuegoConTamanoActual(ventanaJuego);
 
             hide();
         }
@@ -1948,7 +1968,7 @@ class MenusUI : public QWidget {
 
             conectarRetornoJuego(ventanaJuego);
 
-            ventanaJuego->show();
+            mostrarVentanaJuegoConTamanoActual(ventanaJuego);
 
             hide();
         }
@@ -2112,7 +2132,7 @@ class MenusUI : public QWidget {
 
             conectarRetornoJuego(ventanaJuego);
 
-            ventanaJuego->show();
+            mostrarVentanaJuegoConTamanoActual(ventanaJuego);
 
             hide();
         }
@@ -2162,7 +2182,7 @@ class MenusUI : public QWidget {
 
             conectarRetornoJuego(ventanaJuego);
 
-            ventanaJuego->show();
+            mostrarVentanaJuegoConTamanoActual(ventanaJuego);
 
             hide();
         }
@@ -2577,7 +2597,7 @@ class MenusUI : public QWidget {
 
             conectarRetornoJuego(ventanaJuego);
 
-            ventanaJuego->show();
+            mostrarVentanaJuegoConTamanoActual(ventanaJuego);
 
             hide();
         }
@@ -2604,7 +2624,7 @@ class MenusUI : public QWidget {
 
             conectarRetornoJuego(ventanaJuego);;
 
-            ventanaJuego->show();
+            mostrarVentanaJuegoConTamanoActual(ventanaJuego);
 
             hide();
         }
