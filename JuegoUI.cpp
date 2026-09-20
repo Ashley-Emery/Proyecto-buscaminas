@@ -124,6 +124,7 @@ class JuegoUI : public QWidget {
         QVideoWidget* videoJulius;
         QMediaPlayer* reproductorJulius;
         bool animacionJuliusFinalizada;
+        QTimer* timerRespaldoJulius;
 
         // PANTALLA LEVEL FAILED
         QWidget* contenedorDerrota;
@@ -220,6 +221,7 @@ class JuegoUI : public QWidget {
                 videoJulius(nullptr),
                 reproductorJulius(nullptr),
                 animacionJuliusFinalizada(false),
+                timerRespaldoJulius(nullptr),
                 contenedorDerrota(nullptr),
                 fondoDerrota(nullptr),
                 botonRetryDerrota(nullptr),
@@ -472,6 +474,15 @@ class JuegoUI : public QWidget {
                     verificarFinPartida();
                 }
             });
+
+            // TIMER DE RESPALDO PARA LA ANIMACION DE JULIUS
+            timerRespaldoJulius = new QTimer(this);
+            timerRespaldoJulius->setSingleShot(true);
+
+            connect(timerRespaldoJulius, &QTimer::timeout, this, [this]() {
+                finalizarAnimacionJulius();
+            });
+
         }
 
         // PAGINA INTRO BOSS
@@ -1477,6 +1488,15 @@ class JuegoUI : public QWidget {
             }
         }
 
+        void establecerControlesPartidaHabilitados(bool habilitados) {
+
+            botonHome->setEnabled(habilitados);
+            botonRetry->setEnabled(habilitados);
+            botonHelp->setEnabled(habilitados);
+            botonMusic->setEnabled(habilitados);
+            botonFlagNivel->setEnabled(habilitados);
+        }
+
         // ---- RETRY
         void reiniciarPartida() {
 
@@ -1537,6 +1557,9 @@ class JuegoUI : public QWidget {
             }
 
 
+            // A partir de este momento el flujo de derrota no debe poder interrumpirse.
+            establecerControlesPartidaHabilitados(false);
+
             // Si hubo derrota, el esqueleto revela todas las minas.
             partida.revelarMinasAlFinalizar();
 
@@ -1571,9 +1594,7 @@ class JuegoUI : public QWidget {
 
             // Julius dura 5 segundos.
             // El respaldo solo se usa si Qt no dispara EndOfMedia.
-            QTimer::singleShot(11000, this, [this]() {
-                finalizarAnimacionJulius();
-            });
+            timerRespaldoJulius->start(11000);
         }
 
 
@@ -1585,6 +1606,10 @@ class JuegoUI : public QWidget {
 
             animacionJuliusFinalizada = true;
 
+            if (timerRespaldoJulius != nullptr) {
+                timerRespaldoJulius->stop();
+            }
+
             reproductorJulius->stop();
 
             paginas->setCurrentWidget(paginaDerrota);
@@ -1595,7 +1620,13 @@ class JuegoUI : public QWidget {
         // ---- RETRY DESDE LEVEL FAILED
         void reiniciarDesdeDerrota() {
 
-            animacionJuliusFinalizada = false;
+            if (timerRespaldoJulius != nullptr) {
+                timerRespaldoJulius->stop();
+            }
+
+            reproductorJulius->stop();
+
+            animacionJuliusFinalizada = true;
 
             filaBombaExplotada = -1;
             columnaBombaExplotada = -1;
@@ -1609,6 +1640,10 @@ class JuegoUI : public QWidget {
             crearTableroGrafico();
             actualizarTiempo();
             configurarMusica();
+            configurarInfoNivel();
+
+            // Esta ya es una partida nueva.
+            establecerControlesPartidaHabilitados(true);
 
             paginas->setCurrentWidget(paginaPartida);
 
