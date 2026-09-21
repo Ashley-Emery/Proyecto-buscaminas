@@ -130,29 +130,29 @@ const string TEMPLATE_FINISH_LINE = "assets/templates/finish-line.png";
 // -----------------------------------------------------------------------------
 // VIDEOS DE BOSSES
 // -----------------------------------------------------------------------------
-const string VIDEO_CAPTAIN_BRINEYBEARD = "assets/bosses/Captain-Brineybeard.mp4";
-const string VIDEO_BEPPI_THE_CLOWN = "assets/bosses/Beppi-the-Clown.mp4";
-const string VIDEO_GRIM_MATCHSTICK = "assets/bosses/Grim-Matchstick.mp4";
-const string VIDEO_RIBBY_AND_CROAKS = "assets/bosses/Ribby-&-Croaks.mp4";
-const string VIDEO_CALA_MARIA = "assets/bosses/Cala-Maria.mp4";
-const string VIDEO_DR_KAHL_ROBOT = "assets/bosses/Dr.-Kahl's-Robot.mp4";
-const string VIDEO_WALLY_WARBLES = "assets/bosses/Wally-Warbles.mp4";
-const string VIDEO_CHEF_SALTBAKER = "assets/bosses/Chef-Saltbaker.mp4";
-const string VIDEO_THE_DEVIL = "assets/bosses/The-Devil.mp4";
-const string VIDEO_HILDA_BERG = "assets/bosses/Hilda-Berg.mp4";
-const string VIDEO_WERNER_WERMAN = "assets/bosses/Werner-Werman.mp4";
-const string VIDEO_BARONESS_VON_BON_BON = "assets/bosses/Baroness-Von-Bon-Bon.mp4";
-const string VIDEO_DJIMMI_THE_GREAT = "assets/bosses/Djimmi-the-Great.mp4";
-const string VIDEO_KING_DICE = "assets/bosses/King-Dice.mp4";
+const string VIDEO_CAPTAIN_BRINEYBEARD = "assets/bosses/Captain-Brineybeard.wmv";
+const string VIDEO_BEPPI_THE_CLOWN = "assets/bosses/Beppi-the-Clown.wmv";
+const string VIDEO_GRIM_MATCHSTICK = "assets/bosses/Grim-Matchstick.wmv";
+const string VIDEO_RIBBY_AND_CROAKS = "assets/bosses/Ribby-&-Croaks.wmv";
+const string VIDEO_CALA_MARIA = "assets/bosses/Cala-Maria.wmv";
+const string VIDEO_DR_KAHL_ROBOT = "assets/bosses/Dr.-Kahl's-Robot.wmv";
+const string VIDEO_WALLY_WARBLES = "assets/bosses/Wally-Warbles.wmv";
+const string VIDEO_CHEF_SALTBAKER = "assets/bosses/Chef-Saltbaker.wmv";
+const string VIDEO_THE_DEVIL = "assets/bosses/The-Devil.wmv";
+const string VIDEO_HILDA_BERG = "assets/bosses/Hilda-Berg.wmv";
+const string VIDEO_WERNER_WERMAN = "assets/bosses/Werner-Werman.wmv";
+const string VIDEO_BARONESS_VON_BON_BON = "assets/bosses/Baroness-Von-Bon-Bon.wmv";
+const string VIDEO_DJIMMI_THE_GREAT = "assets/bosses/Djimmi-the-Great.wmv";
+const string VIDEO_KING_DICE = "assets/bosses/King-Dice.wmv";
 
 
 // -----------------------------------------------------------------------------
 // ANIMACIONES GENERALES
 // -----------------------------------------------------------------------------
-const string ANIMACION_INTRO = "assets/animations/intro.mp4";
-const string ANIMACION_JULIUS = "assets/animations/julius.mp4";
-const string ANIMACION_TO_THE_RESCUE = "assets/animations/to-the-rescue.mp4";
-const string ANIMACION_JULIUS_CELEBRATES = "assets/animations/julius-celebrates.mp4";
+const string ANIMACION_INTRO = "assets/animations/intro.wmv";
+const string ANIMACION_JULIUS = "assets/animations/julius.wmv";
+const string ANIMACION_TO_THE_RESCUE = "assets/animations/to-the-rescue.wmv";
+const string ANIMACION_JULIUS_CELEBRATES = "assets/animations/julius-celebrates.wmv";
 
 
 // -----------------------------------------------------------------------------
