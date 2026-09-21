@@ -125,15 +125,13 @@ Qt Core:
 
 COMANDOS PARA GALATEA EN POWERSHELL EN VSCODE
 
-& "C:\Qt\Tools\CMake_64\bin\cmake.exe" -S . -B build `
--G "MinGW Makefiles" `
--DCMAKE_BUILD_TYPE=Debug `
--DCMAKE_CXX_COMPILER="C:/Users/USER/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Qt515/Tools/mingw810_64/bin/g++.exe" `
--DCMAKE_MAKE_PROGRAM="C:/Users/USER/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Qt515/Tools/mingw810_64/bin/mingw32-make.exe" `
--DCMAKE_PREFIX_PATH="C:/Users/USER/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Qt515/5.15.2/mingw81_64"
+$QtRoot = "C:\Users\USER\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Qt515"
+$QtBin  = "$QtRoot\5.15.2\mingw81_64\bin"
+$MinGW  = "$QtRoot\Tools\mingw810_64\bin"
+$CMake  = "C:\Qt\Tools\CMake_64\bin"
+
+$env:PATH = "$QtBin;$MinGW;$CMake;C:\Windows\System32;C:\Windows"
 
 
-& "C:\Qt\Tools\CMake_64\bin\cmake.exe" --build build -j 4
-
-
+& "$CMake\cmake.exe" --build build -j 4
 .\build\Proyecto-buscaminas.exe
