@@ -26,7 +26,7 @@ using namespace std;
 QWidget* crearJuegoUI(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo, int numeroNivel);
 QWidget* crearJuegoUICargado(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, ModoJuego modo);
 QWidget* crearJuegoUIPersonalizado(Usuario* usuarioActual, SistemaUsuarios* sistemaUsuarios, int filas, int columnas);
-
+QWidget* crearInvestigativoUI(QWidget* parent = nullptr);
 
 // CONSTANTES VISUALES
 const int ANCHO_DISENO_MENU = 2080;
@@ -114,6 +114,7 @@ class MenusUI : public QWidget {
         QPushButton* botonPlay;
         QPushButton* botonMapa;
         QPushButton* botonHuevoPascua;
+        QPushButton* botonInvestigativo;
 
         // MAPA BLACKPOWDER BAY
         QWidget* contenedorMapa;
@@ -260,6 +261,7 @@ class MenusUI : public QWidget {
                 botonPlay(nullptr),
                 botonMapa(nullptr),
                 botonHuevoPascua(nullptr),
+                botonInvestigativo(nullptr),
                 videoIntro(nullptr),
                 reproductorIntro(nullptr),
                 introIniciada(false),
@@ -736,9 +738,17 @@ class MenusUI : public QWidget {
             // BOTONES TRANSPARENTES
             botonMapa = crearBotonTransparente();
             botonHuevoPascua = crearBotonTransparente();
+            botonInvestigativo = crearBotonTransparente();
 
             botonMapa->setParent(contenedorMenuPrincipal);
             botonHuevoPascua->setParent(contenedorMenuPrincipal);
+            botonInvestigativo->setParent(contenedorMenuPrincipal);
+
+            // TEMPORAL PARA QA - MORADO
+            // botonInvestigativo->setStyleSheet(
+            //     "background-color: rgba(140, 82, 255, 120);"
+            //     "border: 2px solid #8c52ff;"
+            // );
 
 
             // ACCIONES
@@ -756,6 +766,10 @@ class MenusUI : public QWidget {
 
             connect(botonHuevoPascua, &QPushButton::clicked, this, [this]() {
                 mostrarHuevoPascua();
+            });
+
+            connect(botonInvestigativo, &QPushButton::clicked, this, [this]() {
+                abrirInvestigativo();
             });
 
             connect(botonMiPerfil, &QPushButton::clicked, this, [this]() {
@@ -1863,6 +1877,30 @@ class MenusUI : public QWidget {
             paginas->setCurrentWidget(paginaMenuPrincipal);
 
             ajustarInterfaz();
+        }
+
+        void abrirInvestigativo() {
+
+            QWidget* ventanaInvestigativa = crearInvestigativoUI();
+
+            ventanaInvestigativa->setAttribute(Qt::WA_DeleteOnClose);
+            ventanaInvestigativa->setAttribute(Qt::WA_QuitOnClose, false);
+
+            connect(ventanaInvestigativa, &QObject::destroyed, this, [this]() {
+                show();
+                mostrarMenuPrincipal();
+            });
+
+            QRect geometriaMenu = geometry();
+
+            int x = geometriaMenu.x() + (geometriaMenu.width() - ventanaInvestigativa->width()) / 2;
+            int y = geometriaMenu.y() + (geometriaMenu.height() - ventanaInvestigativa->height()) / 2;
+
+            ventanaInvestigativa->move(x, y);
+
+            hide();
+
+            ventanaInvestigativa->show();
         }
 
         void cerrarSesion() {
@@ -3145,6 +3183,14 @@ class MenusUI : public QWidget {
                     static_cast<int>(50 * escalaMenuY)
                 );
 
+                // BOTON INVISIBLE SOBRE LA BRUJULA DE FELIX
+                botonInvestigativo->setGeometry(
+                    static_cast<int>(480 * escalaMenuX),
+                    static_cast<int>(390 * escalaMenuY),
+                    static_cast<int>(55 * escalaMenuX),
+                    static_cast<int>(60 * escalaMenuY)
+                );
+
                 // TEXTO DE BIENVENIDA
                 textoBienvenida->setGeometry(
                     static_cast<int>(445 * escalaMenuX),
@@ -3210,6 +3256,7 @@ class MenusUI : public QWidget {
 
                 botonMapa->raise();
                 botonHuevoPascua->raise();
+                botonInvestigativo->raise();
             }
 
             // PAGINA MAPA BLACKPOWDER BAY

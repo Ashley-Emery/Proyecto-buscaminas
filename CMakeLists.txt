@@ -27,6 +27,8 @@ add_executable(Proyecto-buscaminas
     Bosses.cpp
     JuegoUI.cpp
     MenusUI.cpp
+    Investigativo.cpp
+    InvestigativoUI.cpp
 )
 
 target_link_libraries(Proyecto-buscaminas
