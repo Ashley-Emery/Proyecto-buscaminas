@@ -15,7 +15,7 @@ find_package(Qt5 REQUIRED COMPONENTS
     MultimediaWidgets
 )
 
-add_executable(Proyecto-buscaminas
+add_executable(Proyecto-buscaminas WIN32
     main.cpp
     Tablero.cpp
     Partida.cpp
