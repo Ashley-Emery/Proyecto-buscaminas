@@ -2018,7 +2018,6 @@ class JuegoUI : public QWidget {
             labelTiempo->setFont(fuenteTimer);
 
             labelTiempo->show();
-            labelTiempo->raise();
 
             // -------------------------------------------------------------------------
             // TABLERO
@@ -2148,6 +2147,7 @@ class JuegoUI : public QWidget {
             fondo->lower();
 
             videoBanner->raise();
+            labelTiempo->raise();
             vistaTablero->raise();
 
             botonHome->raise();
