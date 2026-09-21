@@ -1975,27 +1975,24 @@ class JuegoUI : public QWidget {
             );
 
             // -------------------------------------------------------------------------
-            // BANNER SUPERIOR
+            // BANNER SUPERIOR + TIMER
+            // En Windows QVideoWidget usa una superficie nativa.
+            // Por eso el timer NO debe superponerse físicamente al video.
             // -------------------------------------------------------------------------
 
-            videoBanner->setGeometry(
-                static_cast<int>(95 * escalaX),
-                static_cast<int>(145 * escalaY),
-                static_cast<int>(1890 * escalaX),
-                static_cast<int>(175 * escalaY)
-            );
+            int bannerX = static_cast<int>(95 * escalaX);
+            int bannerY = static_cast<int>(145 * escalaY);
+            int bannerAncho = static_cast<int>(1890 * escalaX);
+            int bannerAlto = static_cast<int>(175 * escalaY);
 
-            // -------------------------------------------------------------------------
-            // TIMER
-            // El timer es hermano del videoBanner dentro de contenedorDiseno.
-            // Esto evita problemas de superposición de QVideoWidget en Windows.
-            // -------------------------------------------------------------------------
+            int timerAncho = static_cast<int>(350 * escalaX);
 
+            // TIMER: ocupa físicamente el lado izquierdo del banner
             labelTiempo->setGeometry(
-                videoBanner->x(),
-                videoBanner->y(),
-                static_cast<int>(350 * escalaX),
-                videoBanner->height()
+                bannerX,
+                bannerY,
+                timerAncho,
+                bannerAlto
             );
 
             labelTiempo->setContentsMargins(
@@ -2016,8 +2013,15 @@ class JuegoUI : public QWidget {
             fuenteTimer.setPixelSize(tamanoFuenteTimer);
 
             labelTiempo->setFont(fuenteTimer);
-
             labelTiempo->show();
+
+            // VIDEO: comienza DESPUES del timer
+            videoBanner->setGeometry(
+                bannerX + timerAncho,
+                bannerY,
+                bannerAncho - timerAncho,
+                bannerAlto
+            );
 
             // -------------------------------------------------------------------------
             // TABLERO
