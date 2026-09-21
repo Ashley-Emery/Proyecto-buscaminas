@@ -537,7 +537,9 @@ class JuegoUI : public QWidget {
             reproductorBanner->setVolume(0);
 
             // TIMER VISUAL
-            labelTiempo = new QLabel(videoBanner);
+            labelTiempo = new QLabel(contenedorDiseno);
+            labelTiempo->setAttribute(Qt::WA_TransparentForMouseEvents);
+            labelTiempo->show();
 
             labelTiempo->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
@@ -1985,13 +1987,13 @@ class JuegoUI : public QWidget {
 
             // -------------------------------------------------------------------------
             // TIMER
-            // El timer es hijo del videoBanner, por eso estas coordenadas son locales
-            // al banner.
+            // El timer es hermano del videoBanner dentro de contenedorDiseno.
+            // Esto evita problemas de superposición de QVideoWidget en Windows.
             // -------------------------------------------------------------------------
 
             labelTiempo->setGeometry(
-                0,
-                0,
+                videoBanner->x(),
+                videoBanner->y(),
                 static_cast<int>(350 * escalaX),
                 videoBanner->height()
             );
@@ -2005,9 +2007,17 @@ class JuegoUI : public QWidget {
 
             QFont fuenteTimer = labelTiempo->font();
 
-            fuenteTimer.setPixelSize(static_cast<int>(58 * escalaFuente));
+            int tamanoFuenteTimer = static_cast<int>(58 * escalaFuente);
+
+            if (tamanoFuenteTimer < 18) {
+                tamanoFuenteTimer = 18;
+            }
+
+            fuenteTimer.setPixelSize(tamanoFuenteTimer);
 
             labelTiempo->setFont(fuenteTimer);
+
+            labelTiempo->show();
             labelTiempo->raise();
 
             // -------------------------------------------------------------------------
